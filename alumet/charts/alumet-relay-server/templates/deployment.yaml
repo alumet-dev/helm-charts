@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}
+#  name: alumet-relay-server
+
+spec:
+  strategy:
+    rollingUpdate:
+  selector:
+    matchLabels:
+      app: alumet-relay-server
+  template:
+    metadata:
+      labels:
+        app: alumet-relay-server
+    spec:
+      containers:
+        - name: alumet-relay-server
+          image: {{ .Values.global.image.registry }}/alumet-relay-server:latest
+          command: ["./alumet-relay-server"]
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "{{ .Values.resources.memory }}"
+              cpu: "{{ .Values.resources.cpu }}"
+          volumeMounts:
+            - name: config
+              mountPath: /alumet-collector.toml
+              subPath: config
+          env:
+            - name: RUST_LOG
+              value: "{{ .Values.env.RUST_LOG }}"
+#         args: [ "--max_update_interval 10" ]
+#          args: [ "{{ .Values.cmd.Arg1 }}" ]
+          ports:
+            - containerPort: {{ .Values.global.service.port }}
+          securityContext:
+            capabilities:
+              add: [{{ .Values.securityContext.capabilities }}]
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "alumet-relay-server.fullname" . }}-config
+      imagePullSecrets:
+        - name: {{ .Values.global.secret }}
+      tolerations:
+        - key: "master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      affinity:
+        #nodeAffinity:
+        #  requiredDuringSchedulingIgnoredDuringExecution:
+        #    nodeSelectorTerms:
+        #    - matchExpressions:
+        #      - key: "node-role.kubernetes.io/control-plane"
+#               - key: "node-role.kubernetes.io/control-plane"
+
+#                operator: "Exists"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}-config
+data:
+  config: |
+    [plugins."plugin-relay:server"]
+    address = "::"
+    port = {{ .Values.global.service.port }}
+
+    [plugins.csv]
+    output_path = "alumet-output.csv"
+
+    [plugins.influxdb]
+    enable = true
+    host = "http://alumet-influxdb2:80"
+    token = "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
+    org = "influxdata"
+    bucket = "default"
+    attributes_as = "tag"
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}
+spec:
+  selector:
+    app: alumet-relay-server
+  ports:
+    - port: {{ .Values.global.service.port }}

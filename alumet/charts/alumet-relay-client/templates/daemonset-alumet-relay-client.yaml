@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "alumet-relay-client.fullname" . }}
+
+  
+spec:
+  selector:
+    matchLabels:
+      name: alumet-relay-client
+  template:
+    metadata:
+      labels:
+        name: alumet-relay-client
+    spec:
+      tolerations:
+      # these tolerations are to have the daemonset runnable on control plane nodes
+      # remove them if your control plane nodes should not run pods
+      #- key: kubernetes.io/hostname
+      # operator: Equal
+      # value: "edge-master.seed"
+      # effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: master
+        operator: Exists
+        effect: NoSchedule
+
+      serviceAccountName: alumet-reader
+      automountServiceAccountToken: true
+
+      containers:
+      - name: alumet-relay-client
+        image: {{ .Values.global.image.registry }}/alumet-relay-client:latest
+        command: ["./alumet-relay-client"]
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "{{ .Values.resources.memory }}"
+            cpu: "{{ .Values.resources.cpu }}"
+        volumeMounts:
+          - name: sysfs
+            mountPath: /sys
+          - name: config
+            mountPath: /alumet-agent.toml
+            subPath: config
+
+        env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: RUST_LOG
+            value: "{{ .Values.env.RUST_LOG }}"
+        args: [ "{{ .Values.cmd.Arg1 }}" ]
+
+
+        securityContext:
+          capabilities:
+            add: ["SYS_ADMIN", "SYS_NICE"]
+
+      volumes:
+        - name: sysfs
+          hostPath:
+            path: /sys
+            type: "Directory"
+        
+        - name: config
+          configMap:
+            name: {{ template "alumet-relay-client.fullname" . }}-config
+      
+      imagePullSecrets:
+        - name: {{ .Values.global.secret }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "alumet-relay-client.fullname" . }}-config
+data:
+  config: |
+    max_update_interval = "500ms"
+
+    [plugins."plugin-relay:client"]
+    client_name = "edge-slave1"
+    collector_uri = "{{ .Values.global.plugin.relay.collector_uri }}:{{  .Values.global.service.port }}"
+
+    [plugins.rapl]
+    poll_interval = "1s"
+    flush_interval = "5s"
+    no_perf_events = false
+
+    [plugins.k8s]
+    path = "/sys/fs/cgroup/kubepods.slice/"
+    poll_interval = "1s"
+    kubernetes_api_url = "https://kubernetes.default.svc:443"
+    hostname = "$NODE_NAME"
+    token_retrieval = "file"
