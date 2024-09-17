@@ -1,0 +1,5 @@
+alumet is deployed.
+The following alumet components are deployed:
+
+Alumet client
+Alumet server is running on port: {{ .Values.global.service.port }}
