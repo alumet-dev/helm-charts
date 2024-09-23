@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - main
+      - feature/first-helm-chart
 
 jobs:
   release:
@@ -13,6 +13,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - run: echo "Start Checkout"
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -23,11 +24,13 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      - run: echo "Installing Helm"
       - name: Install Helm
         uses: azure/setup-helm@v4
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - run: echo "Start build release"
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         env:
