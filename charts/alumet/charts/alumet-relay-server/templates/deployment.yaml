@@ -75,7 +75,7 @@ data:
 
     [plugins.influxdb]
     enable = true
-    host = "http://alumet-influxdb2:80"
+    host = "http://{{ .Release.Name }}-influxdb2:80"
     token = "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
     org = "influxdata"
     bucket = "default"
