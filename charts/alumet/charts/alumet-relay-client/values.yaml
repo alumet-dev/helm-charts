@@ -50,7 +50,7 @@ ingress:
   #      - chart-example.local
 
 resources:
-  cpu: 500m
+  cpu: 100m
   memory: 128Mi
   # requests:
   #   cpu: 100m
@@ -87,3 +87,12 @@ env:
 
 cmd:  
   Arg1: ""
+
+pluginsK8s:
+  enable: true 
+
+pluginsRapl:
+  enable: true
+
+pluginsEnergyAttribution:
+  enable: true

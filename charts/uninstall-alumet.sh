@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script install the helm chart  alumet-relay-server
-set -x
+#set -x
 
 basedir=$(dirname $0)
 . $basedir/helm-include.sh
@@ -9,7 +9,7 @@ basedir=$(dirname $0)
 # global variables
 chartName="alumet"
 # alumet instance name installed on the platform
-instanceName="alumet-manu"
+instanceName="demo"
 
 # check input parameters
 parametersCheck $*

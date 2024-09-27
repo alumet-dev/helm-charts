@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script install the helm chart  alumet-relay-server
-set -x
+#set -x
 
 basedir=$(dirname $0)
 . $basedir/helm-include.sh
@@ -9,7 +9,7 @@ basedir=$(dirname $0)
 # global variables
 chartName="alumet"
 # alumet instance name installed on the platform
-instanceName="alumet-manu"
+instanceName="demo"
 version="0.6"
 
 # check input parameters
@@ -29,7 +29,10 @@ fi
         --set global.service.port=50054 \
         --set alumet-relay-client.env.RUST_LOG="info" \
         --set alumet-relay-client.cmd.Arg1="--max-update-interval=1000ms" \
-        --set alumet-relay-server.env.RUST_LOG="info" \
+        --set alumet-relay-client.pluginsK8s.enable="true" \
+        --set alumet-relay-client.pluginsRapl.enable="false" \
+        --set alumet-relay-client.pluginsEnergyAttribution.enable="false" \
+        --set alumet-relay-server.env.RUST_LOG="trace" \
         --set alumet-relay-server.influxdb.org="seed" \
         --set influxdb2.enabled=true \
         --set alumet-relay-server.enabled=true \
@@ -37,4 +40,3 @@ fi
         --set global.plugin.relay.collector_uri="http://${instanceName}-alumet-relay-server" \
         --version ${version}
 #--set alumet-relay-server.cmd.Arg1=" "       
-

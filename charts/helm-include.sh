@@ -8,7 +8,7 @@ parametersCheck()
 if [ $# != 1 ]
    then
       echo "Parameters required :"
-      echo "- platform id: [otpaasmanu|ovh]"
+      echo "- platform id: [otpaasmanu|ovhdemo|ovhtest]"
       exit 1
    fi
 
@@ -24,7 +24,15 @@ if [ $# != 1 ]
       kubeconfigfile=$HOME/.kube/config
       ;;
 
-   ovh)
+   ovhdemo)
+      # set the namespace
+      projectNs=demo
+      
+      # kubernetes platform
+      kubeconfigfile=$HOME/.kube/kubeconfig-ovh-2.yml
+      ;;
+
+   ovhtest)
       # set the namespace
       projectNs=manu-test
       
@@ -34,7 +42,7 @@ if [ $# != 1 ]
 
    *)
       # unknown platform
-      echo "PlatformId '$platformId' unknown (valid plateformId : [otpaasmanu|ovh])"
+      echo "PlatformId '$platformId' unknown (valid plateformId : [otpaasmanu|ovhdemo|ovhtest])"
       exit 2
       ;;
 
