@@ -17,8 +17,9 @@ spec:
     spec:
       containers:
         - name: alumet-relay-server
-          image: {{ .Values.global.image.registry }}/alumet-relay-server:latest
-          command: ["./alumet-relay-server"]
+          image: {{ .Values.global.image.registry }}/alumet-server:0.7.2-alpha
+          command: ["./alumet-relay-server", "--config", "alumet-collector.toml"]
+#          command: ["sleep", "infinity"]
           imagePullPolicy: Always
           resources:
             limits:
@@ -66,12 +67,18 @@ metadata:
   name: {{ template "alumet-relay-server.fullname" . }}-config
 data:
   config: |
-    [plugins."plugin-relay:server"]
-    address = "::"
+    max_update_interval = "500ms"
+
+    [plugins.relay-server]
+    address = "::1"
     port = {{ .Values.global.service.port }}
 
     [plugins.csv]
     output_path = "alumet-output.csv"
+    force_flush = true
+    append_unit_to_metric_name = true
+    use_unit_display_name = true
+    csv_delimiter = ";"
 
     [plugins.influxdb]
     enable = true
