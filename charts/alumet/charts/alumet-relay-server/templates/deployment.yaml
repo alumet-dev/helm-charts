@@ -69,26 +69,25 @@ data:
   config: |
     max_update_interval = "500ms"
 
-    [plugins.relay-server]
-    address = "::1"
-    port = {{ .Values.global.service.port }}
-
-    [plugins.csv]
-    output_path = "alumet-output.csv"
-    force_flush = true
-    append_unit_to_metric_name = true
-    use_unit_display_name = true
-    csv_delimiter = ";"
-
     [plugins.influxdb]
-    enable = true
+    enable = {{ .Values.pluginsInfluxdb.enable }}
     host = "http://{{ .Release.Name }}-influxdb2:80"
     token = "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
     org = "influxdata"
     bucket = "default"
     attributes_as = "tag"
 
+    [plugins.relay-server]
+    address = "::"
+    port = {{ .Values.global.service.port }}
 
+    [plugins.csv]
+    enable = {{ .Values.pluginsCSV.enable }}
+    output_path = "alumet-output.csv"
+    force_flush = true
+    append_unit_to_metric_name = true
+    use_unit_display_name = true
+    csv_delimiter = ";"
 ---
 
 apiVersion: v1

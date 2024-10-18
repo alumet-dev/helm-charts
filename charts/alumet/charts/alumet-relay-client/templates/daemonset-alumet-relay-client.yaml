@@ -84,26 +84,19 @@ data:
   config: |
     max_update_interval = "500ms"
 
-    [plugins.perf]
-    enable = false
-
-    [plugins.socket-control]
-    socket_path = "alumet-control.sock"
-
-    [plugins.relay-client]
-    client_name = "edge-slave1"
-    collector_uri = "{{ .Values.global.plugin.relay.collector_uri }}:{{  .Values.global.service.port }}"
-    buffer_size = 200
-    buffer_timeout = "30s"
-
     [plugins.rapl]
     enable = {{ .Values.pluginsRapl.enable }}
     poll_interval = "1s"
     flush_interval = "5s"
     no_perf_events = false
-
-    [plugins.energy-attribution]
-    enable = {{ .Values.pluginsEnergyAttribution.enable }}
+    
+    [plugins.perf]
+    enable = false
+    poll_interval = "1s"
+    flush_interval = "5s"
+    hardware_events = ["REF_CPU_CYCLES", "CACHE_MISSES", "BRANCH_MISSES"]
+    software_events = []
+    cache_events = ["LL_READ_MISS"]
 
     [plugins.k8s]
     enable = {{ .Values.pluginsK8s.enable }}
@@ -113,8 +106,23 @@ data:
     hostname = "$NODE_NAME"
     token_retrieval = "file"
 
+    [plugins.socket-control]
+    socket_path = "alumet-control.sock"
+
+    [plugins.procfs]
+    enable = false
+
+    [plugins.relay-client]
+    client_name = "edge-master.seed"
+    collector_uri = "{{ .Values.global.plugin.relay.collector_uri }}:{{  .Values.global.service.port }}"
+    buffer_size = 200
+    buffer_timeout = "30s"
+    
     [plugins.EnergyEstimationTdpPlugin]
     poll_interval = "1s"
     tdp = 100.0
     nb_vcpu = 1.0
     nb_cpu = 1.0
+
+    [plugins.energy-attribution]
+    enable = {{ .Values.pluginsEnergyAttribution.enable }}
