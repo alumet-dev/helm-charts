@@ -61,3 +61,9 @@ env:
   
 cmd:  
   Arg1: ""
+
+pluginsInfluxdb:
+  enable: true
+  
+pluginsCSV:
+  enable: true
