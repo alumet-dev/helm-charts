@@ -15,6 +15,14 @@ spec:
       labels:
         app: alumet-relay-server
     spec:
+      initContainers:
+        - name: wait-for-influxdb
+          image: busybox:latest
+          command: [
+            'sh',
+            '-c',
+            'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+          ]
       containers:
         - name: alumet-relay-server
           image: {{ .Values.global.image.registry }}/alumet-server:0.7.2-alpha

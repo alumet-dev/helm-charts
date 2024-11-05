@@ -30,6 +30,15 @@ spec:
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
 
+      initContainers:
+        - name: wait-for-alumet-server
+          image: busybox:latest
+          command: [
+            'sh',
+            '-c',
+            'until nc -vz {{ trimPrefix "http://" .Values.global.plugin.relay.collector_uri }} {{  .Values.global.service.port }}; do echo "Waiting for alumet-serve to be running"; sleep 2; done;'
+          ]
+
       containers:
       - name: alumet-relay-client
         image: {{ .Values.global.image.registry }}/alumet-client:0.7.0-alpha
