@@ -1,0 +1,20 @@
+{
+    "inputs": {
+        "influxdb_v2": [
+            {
+                "bucket": "defaut",
+                "host": "demo-influxdb2",
+                "org": "influxdata",
+                "port": 80,
+                "token": "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg",
+                "name": "alumet"
+            }
+        ]
+    },
+    "log": {
+        "level": "trace",
+        "output": "stdout"
+    },
+    "outputs": {},
+    "parameters": {}    
+}

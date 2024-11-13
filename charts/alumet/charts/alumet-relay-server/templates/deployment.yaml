@@ -40,6 +40,8 @@ spec:
           env:
             - name: RUST_LOG
               value: "{{ .Values.env.RUST_LOG }}"
+            - name: RUST_BACKTRACE
+              value: "{{ .Values.env.RUST_BACKTRACE }}"
 #         args: [ "--max_update_interval 10" ]
 #          args: [ "{{ .Values.cmd.Arg1 }}" ]
           ports:

@@ -60,11 +60,6 @@ env:
   RUST_LOG: ""
   RUST_BACKTRACE: ""
   
-cmd:  
-  Arg1: ""
 
-pluginsInfluxdb:
-  enable: true
+
   
-pluginsCSV:
-  enable: true

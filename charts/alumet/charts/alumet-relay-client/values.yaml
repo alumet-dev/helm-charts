@@ -84,6 +84,7 @@ affinity: {}
 
 env:
   RUST_LOG: ""
+  RUST_BACKTRACE: ""
 
 cmd:  
   Arg1: ""
@@ -95,4 +96,7 @@ pluginsRapl:
   enable: true
 
 pluginsEnergyAttribution:
+  enable: true
+
+pluginsProcfs:
   enable: true

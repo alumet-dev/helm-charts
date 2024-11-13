@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "alumet-api.fullname" . }}
+#  name: alumet-api
+
+spec:
+  strategy:
+    rollingUpdate:
+  selector:
+    matchLabels:
+      app: alumet-api
+  template:
+    metadata:
+      labels:
+        app: alumet-api
+    spec:
+      # initContainers:
+      #   - name: wait-for-influxdb
+      #     image: busybox:latest
+      #     command: [
+      #       'sh',
+      #       '-c',
+      #       'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+      #     ]
+      containers:
+        - name: alumet-api
+#          image: {{ .Values.global.image.registry }}/alpine/seed-api-alumet:debug
+          image: {{ .Values.global.image.registry }}/alpine/seed-api-alumet:0.7.1-alpha
+          command: ["./seed-api-alumet", "-config", "config.json", "-port", "80"]
+#          command: ["sleep", "infinity"]
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "{{ .Values.resources.memory }}"
+              cpu: "{{ .Values.resources.cpu }}"
+          volumeMounts:
+            - name: config
+              mountPath: /config.json
+              subPath: config.json
+          env:
+            - name: RUST_LOG
+              value: "{{ .Values.env.RUST_LOG }}"
+            - name: RUST_BACKTRACE
+              value: "{{ .Values.env.RUST_BACKTRACE }}"
+#         args: [ "--max_update_interval 10" ]
+          ports:
+            - containerPort: {{ .Values.global.service.port }}
+          securityContext:
+            capabilities:
+              add: [{{ .Values.securityContext.capabilities }}]
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "alumet-api.fullname" . }}-config
+      imagePullSecrets:
+        - name: {{ .Values.global.secret }}
+      tolerations:
+        - key: "master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      affinity:
+        #nodeAffinity:
+        #  requiredDuringSchedulingIgnoredDuringExecution:
+        #    nodeSelectorTerms:
+        #    - matchExpressions:
+        #      - key: "node-role.kubernetes.io/control-plane"
+#               - key: "node-role.kubernetes.io/control-plane"
+
+#                operator: "Exists"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "alumet-api.fullname" . }}-config
+
+data:
+  config.json: |-
+{{ .Files.Get "config.json" | indent 4}}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "alumet-api.fullname" . }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: alumet-api
+  ports:
+#    - port: {{ .Values.global.service.port }}
+    - port: 80
+

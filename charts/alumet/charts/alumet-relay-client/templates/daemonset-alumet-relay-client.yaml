@@ -41,7 +41,7 @@ spec:
 
       containers:
       - name: alumet-relay-client
-        image: {{ .Values.global.image.registry }}/alumet-client:0.7.0-alpha
+        image: {{ .Values.global.image.registry }}/alumet-client:0.7.1-alpha
         command: ["./alumet-relay-client", "--config", "alumet-agent.toml"]
 #        command: ["sleep", "infinity"]
         imagePullPolicy: Always
@@ -63,6 +63,8 @@ spec:
                 fieldPath: spec.nodeName
           - name: RUST_LOG
             value: "{{ .Values.env.RUST_LOG }}"
+          - name: RUST_BACKTRACE
+            value: "{{ .Values.env.RUST_BACKTRACE }}"            
 #        args: [ "{{ .Values.cmd.Arg1 }}" ]
 
 
@@ -119,7 +121,7 @@ data:
     socket_path = "alumet-control.sock"
 
     [plugins.procfs]
-    enable = false
+    enable = {{ .Values.pluginsProcfs.enable }}
 
     [plugins.relay-client]
     client_name = "edge-master.seed"
@@ -135,3 +137,27 @@ data:
 
     [plugins.energy-attribution]
     enable = {{ .Values.pluginsEnergyAttribution.enable }}
+
+    [plugins.procfs.kernel]
+    enabled = true
+    poll_interval = "5s"
+
+    [plugins.procfs.memory]
+    enabled = false
+    poll_interval = "5s"
+    metrics = ["MemTotal", "MemFree", "MemAvailable", "Cached", "SwapCached", "Active", "Inactive", "Mapped"]
+
+    [plugins.procfs.processes]
+    enabled = false
+    refresh_interval = "2s"
+    strategy = "watcher"
+
+    [[plugins.procfs.processes.groups]]
+    exe_regex = ""
+    poll_interval = "2s"
+    flush_interval = "4s"
+
+    [plugins.procfs.processes.events]
+    enable = false
+    poll_interval = "1s"
+    flush_interval = "4s"
