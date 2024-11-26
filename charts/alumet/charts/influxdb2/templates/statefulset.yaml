@@ -82,7 +82,7 @@ spec:
               value: {{ .Values.adminUser.organization }}
             # The name to set for the system's initial bucket (Required).
             - name: DOCKER_INFLUXDB_INIT_BUCKET
-              value: {{ .Values.adminUser.bucket }}
+              value: {{ .Values.global.influxdb.bucket }}
             # The duration the system's initial bucket should retain data. If not set, the initial bucket will retain data forever.
             - name: DOCKER_INFLUXDB_INIT_RETENTION
               value: {{ .Values.adminUser.retention_policy }}

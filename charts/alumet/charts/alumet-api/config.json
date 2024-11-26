@@ -2,8 +2,8 @@
     "inputs": {
         "influxdb_v2": [
             {
-                "bucket": "defaut",
-                "host": "demo-influxdb2",
+                "bucket": "{{ .Values.global.influxdb.bucket }}",
+                "host": "{{ .Release.Name }}-influxdb2",
                 "org": "influxdata",
                 "port": 80,
                 "token": "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg",

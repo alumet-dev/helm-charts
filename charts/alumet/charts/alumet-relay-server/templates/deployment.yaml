@@ -84,7 +84,7 @@ data:
     host = "http://{{ .Release.Name }}-influxdb2:80"
     token = "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
     org = "influxdata"
-    bucket = "default"
+    bucket = "{{ .Values.global.influxdb.bucket }}"
     attributes_as = "tag"
 
     [plugins.relay-server]

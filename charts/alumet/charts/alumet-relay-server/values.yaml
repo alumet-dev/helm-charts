@@ -53,7 +53,7 @@ influxdb:
   host: "http://192.168.1.5:8086"
   token: "gpUiwKsJAnxWBt4OaCvW3DcTNKa4c9VZ"
   org: "seed"
-  bucket: "bds"
+  bucket: "{{ .Values.global.service.bucket }}"
   attributes_as: "tag"
   
 env:

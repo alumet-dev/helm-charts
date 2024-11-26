@@ -1,1 +1,3 @@
-alumet-relay-server is deployed and running on port {{ .Values.global.service.port }}
+Installing {{ .Chart.Name }}
+Your installed version  {{ .Chart.Version }}
+Your instance name is:  {{ .Release.Name }}

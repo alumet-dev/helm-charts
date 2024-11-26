@@ -1,5 +1,8 @@
-alumet is deployed.
+Installing {{ .Chart.Name }}
+Your installed version  {{ .Chart.Version }}
+Your instance name is:  {{ .Release.Name }}
+
 The following alumet components are deployed:
 
-Alumet client
+
 Alumet server is running on port: {{ .Values.global.service.port }}

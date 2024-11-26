@@ -78,7 +78,8 @@ metadata:
 
 data:
   config.json: |-
-{{ .Files.Get "config.json" | indent 4}}
+    {{- /* Edit directly the config.json file in the parent directory */ -}}
+    {{- (tpl (.Files.Get "config.json") .) | nindent 6 }}
 
 ---
 

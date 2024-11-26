@@ -116,3 +116,5 @@ global:
   plugin:
     relay:
       collector_uri: "http://alumet-relay-server"
+  influxdb:
+    bucket: default
