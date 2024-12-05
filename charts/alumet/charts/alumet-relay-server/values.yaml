@@ -49,22 +49,19 @@ tolerations: []
 
 affinity: {}
 
-influxdb:
-  host: "http://192.168.1.5:8086"
-  token: "gpUiwKsJAnxWBt4OaCvW3DcTNKa4c9VZ"
-  org: "seed"
-  bucket: "{{ .Values.global.service.bucket }}"
-  attributes_as: "tag"
-  
+#influxdb: For ALUMET packaging, all values are defined on upper layer (as global values)
+
+# set environment variables for log and trace level  
 env:
-  RUST_LOG: ""
+  RUST_LOG: "info"
   RUST_BACKTRACE: ""
   
 cmd:  
   Arg1: ""
 
-pluginsInfluxdb:
-  enable: true
-  
-pluginsCSV:
-  enable: true
+# set enable variable to true/false to activate/unactivate Alumuet plugins
+plugins:
+  influxdb:
+    enable: true
+  csv:
+    enable: true

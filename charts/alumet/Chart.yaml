@@ -15,27 +15,24 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.6
+version: 0.1.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "0.6"
+appVersion: "0.7"
 
 dependencies:
 - name: influxdb2
   version: 2.1.2
   condition: influxdb2.enabled
 - name: alumet-relay-server
-  version: 0.6
+  version: 0.7
   condition: alumet-relay-server.enabled
 - name: alumet-relay-client
-  version: 0.6
+  version: 0.7
   condition: alumet-relay-client.enabled
-- name: seed-deployment-test
-  version: "0.1.0"
-  condition: seed-deployment-test.enabled
 - name: alumet-api
-  version: "0.6"
-  condition: alumet-api.enabled
+  version: 0.7
+  condition: alumet-api.enabled  

@@ -1,3 +1,4 @@
 Installing {{ .Chart.Name }}
 Your installed version  {{ .Chart.Version }}
 Your instance name is:  {{ .Release.Name }}
+alumet-relay client is deployed

@@ -1,1 +1,1 @@
-alumet-relay-server is deployed and running on port {{ .Values.global.service.port }}
+alumet-api is installed

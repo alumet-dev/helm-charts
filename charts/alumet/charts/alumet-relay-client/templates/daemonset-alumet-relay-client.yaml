@@ -32,18 +32,17 @@ spec:
 
       initContainers:
         - name: wait-for-alumet-server
-          image: busybox:latest
+          image: {{ .Values.global.image.registry }}/busybox:latest
           command: [
             'sh',
             '-c',
-            'until nc -vz {{ trimPrefix "http://" .Values.global.plugin.relay.collector_uri }} {{  .Values.global.service.port }}; do echo "Waiting for alumet-serve to be running"; sleep 2; done;'
+            'until nc -vz {{ .Release.Name }}-alumet-relay-server {{ .Values.global.service.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
           ]
 
       containers:
       - name: alumet-relay-client
-        image: {{ .Values.global.image.registry }}/alumet-client:0.7.1-alpha
+        image: {{ .Values.global.image.registry }}/alumet-relay-client:0.7.0-alpha-3
         command: ["./alumet-relay-client", "--config", "alumet-agent.toml"]
-#        command: ["sleep", "infinity"]
         imagePullPolicy: Always
         resources:
           limits:
@@ -96,13 +95,13 @@ data:
     max_update_interval = "500ms"
 
     [plugins.rapl]
-    enable = {{ .Values.pluginsRapl.enable }}
+    enable = {{ .Values.plugins.rapl.enable }}
     poll_interval = "1s"
     flush_interval = "5s"
     no_perf_events = false
     
     [plugins.perf]
-    enable = false
+    enable = {{ .Values.plugins.perf.enable }}
     poll_interval = "1s"
     flush_interval = "5s"
     hardware_events = ["REF_CPU_CYCLES", "CACHE_MISSES", "BRANCH_MISSES"]
@@ -110,7 +109,7 @@ data:
     cache_events = ["LL_READ_MISS"]
 
     [plugins.k8s]
-    enable = {{ .Values.pluginsK8s.enable }}
+    enable = {{ .Values.plugins.K8s.enable }}
     path = "/sys/fs/cgroup/kubepods.slice/"
     poll_interval = "1s"
     kubernetes_api_url = "https://kubernetes.default.svc:443"
@@ -121,22 +120,23 @@ data:
     socket_path = "alumet-control.sock"
 
     [plugins.procfs]
-    enable = {{ .Values.pluginsProcfs.enable }}
+    enable = {{ .Values.plugins.procfs.enable }}
 
     [plugins.relay-client]
     client_name = "edge-master.seed"
-    collector_uri = "{{ .Values.global.plugin.relay.collector_uri }}:{{  .Values.global.service.port }}"
-    buffer_size = 200
+    relay_server = "{{ .Release.Name }}-alumet-relay-server:{{ .Values.global.service.port }}"
+    buffer_max_length = 200
     buffer_timeout = "30s"
     
     [plugins.EnergyEstimationTdpPlugin]
+    enable = {{ .Values.plugins.EnergyEstimationTdpPlugin.enable }}
     poll_interval = "1s"
     tdp = 100.0
     nb_vcpu = 1.0
     nb_cpu = 1.0
 
     [plugins.energy-attribution]
-    enable = {{ .Values.pluginsEnergyAttribution.enable }}
+    enable = {{ .Values.plugins.energyAttribution.enable }}
 
     [plugins.procfs.kernel]
     enabled = true

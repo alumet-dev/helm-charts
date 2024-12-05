@@ -79,7 +79,7 @@ spec:
                   key: admin-password
             # The name to set for the system's initial organization (Required).
             - name: DOCKER_INFLUXDB_INIT_ORG
-              value: {{ .Values.adminUser.organization }}
+              value: {{ .Values.global.influxdb.organization }}
             # The name to set for the system's initial bucket (Required).
             - name: DOCKER_INFLUXDB_INIT_BUCKET
               value: {{ .Values.global.influxdb.bucket }}

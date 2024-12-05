@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "alumet-api.fullname" . }}
-#  name: alumet-api
 
 spec:
   strategy:
@@ -15,20 +14,18 @@ spec:
       labels:
         app: alumet-api
     spec:
-      # initContainers:
-      #   - name: wait-for-influxdb
-      #     image: busybox:latest
-      #     command: [
-      #       'sh',
-      #       '-c',
-      #       'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
-      #     ]
+      initContainers:
+        - name: wait-for-influxdb
+          image: busybox:latest
+          command: [
+            'sh',
+            '-c',
+            'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+          ]
       containers:
         - name: alumet-api
-#          image: {{ .Values.global.image.registry }}/alpine/seed-api-alumet:debug
           image: {{ .Values.global.image.registry }}/alpine/seed-api-alumet:0.7.1-alpha
           command: ["./seed-api-alumet", "-config", "config.json", "-port", "80"]
-#          command: ["sleep", "infinity"]
           imagePullPolicy: Always
           resources:
             limits:
@@ -38,12 +35,6 @@ spec:
             - name: config
               mountPath: /config.json
               subPath: config.json
-          env:
-            - name: RUST_LOG
-              value: "{{ .Values.env.RUST_LOG }}"
-            - name: RUST_BACKTRACE
-              value: "{{ .Values.env.RUST_BACKTRACE }}"
-#         args: [ "--max_update_interval 10" ]
           ports:
             - containerPort: {{ .Values.global.service.port }}
           securityContext:
@@ -92,6 +83,5 @@ spec:
   selector:
     app: alumet-api
   ports:
-#    - port: {{ .Values.global.service.port }}
     - port: 80
 

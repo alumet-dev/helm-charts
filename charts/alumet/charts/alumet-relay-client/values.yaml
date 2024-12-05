@@ -82,21 +82,29 @@ tolerations: []
 
 affinity: {}
 
+# set environment variables for log and trace level
 env:
-  RUST_LOG: ""
+  RUST_LOG: "info"
   RUST_BACKTRACE: ""
 
+# set alumet-relay-client argument parameter  
 cmd:  
   Arg1: ""
 
-pluginsK8s:
-  enable: true 
 
-pluginsRapl:
-  enable: true
+# set enable variable to true/false to activate/unactivate Alumuet plugins
+plugins:
+  K8s:
+    enable: true
+  rapl:
+    enable: true
+  EnergyEstimationTdpPlugin:
+    enable: true
+  energyAttribution:
+    enable: true
+  Procfs:
+    enable: true
+  perf:
+    enable: true
 
-pluginsEnergyAttribution:
-  enable: true
 
-pluginsProcfs:
-  enable: true

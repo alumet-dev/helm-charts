@@ -4,9 +4,9 @@
             {
                 "bucket": "{{ .Values.global.influxdb.bucket }}",
                 "host": "{{ .Release.Name }}-influxdb2",
-                "org": "influxdata",
+                "org": "{{ .Values.global.influxdb.organization }}",
                 "port": 80,
-                "token": "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg",
+                "token": "{{ .Values.global.influxdb.token }}",
                 "name": "alumet"
             }
         ]
