@@ -43,4 +43,7 @@ Its configuration is set in a config map
 ## Influxdb 
 
 All metrics are wrtitten in influxdb if the plugins Influxdb is enabled.
+The credentials to logon to the web page of influxdb are defined by helm variables:
+    influxdb2.adminUser.user (default value: admin)
+    influxdb2.adminUser.password (default value: passwordToChange)
 
