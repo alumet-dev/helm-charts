@@ -86,8 +86,7 @@ influxdb2:
 global:
   secret: sf-registry-secret
   image:
-    #registry: ghrc.io/alumet-dev
-    registry: registry.sf.bds.atos.net/brseed-docker-snapshot
+    registry: ghrc.io/alumet-dev
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
