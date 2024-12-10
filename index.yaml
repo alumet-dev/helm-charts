@@ -24,4 +24,31 @@ entries:
     urls:
     - https://github.com/alumet-dev/helm-charts/releases/download/alumet-0.6/alumet-0.6.tgz
     version: "0.6"
-generated: "2024-09-23T13:21:02.491188698Z"
+  - apiVersion: v2
+    appVersion: 0.7.0-alpha-1
+    created: "2024-12-10T16:12:22.262898261Z"
+    dependencies:
+    - condition: influxdb2.enabled
+      name: influxdb2
+      repository: ""
+      version: 2.1.2
+    - condition: alumet-relay-server.enabled
+      name: alumet-relay-server
+      repository: ""
+      version: 0.7.0-alpha-2.1
+    - condition: alumet-relay-client.enabled
+      name: alumet-relay-client
+      repository: ""
+      version: 0.7.0-alpha-3.1
+    - condition: alumet-api.enabled
+      name: alumet-api
+      repository: ""
+      version: 0.7.0-alpha-1
+    description: A Helm chart for Kubernetes
+    digest: 0a1ce0dd4d0378c8c7cf461ab6c7a3cff10d42d0c9f179e328158e0fff516f55
+    name: alumet
+    type: application
+    urls:
+    - https://github.com/alumet-dev/helm-charts/releases/download/alumet-0.1.0/alumet-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-12-10T16:12:22.262960397Z"
