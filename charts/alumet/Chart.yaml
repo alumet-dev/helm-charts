@@ -35,4 +35,4 @@ dependencies:
   condition: alumet-relay-client.enabled
 - name: alumet-api
   version: 0.7.0-alpha-1
-  condition: alumet-api.enabled  
+  condition: alumet-api.enabled
