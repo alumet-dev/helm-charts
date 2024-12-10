@@ -17,14 +17,14 @@ spec:
     spec:
       initContainers:
         - name: wait-for-influxdb
-          image: {{ .Values.global.image.registry }}/busybox:latest
+          image: docker.io/busybox:latest
           command: [
             'sh',
             '-c',
             'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
           ]
       containers:
-        - name: alumet-relay-server          
+        - name: alumet-relay-server
           image: {{ .Values.global.image.registry }}/alumet-relay-server:0.7.0-alpha-2
           command: ["./alumet-relay-server", "--config", "alumet-collector.toml"]
           imagePullPolicy: Always

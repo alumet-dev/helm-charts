@@ -72,7 +72,7 @@ tolerations: []
 affinity: {}
 
 alumet-api:
-  enabled: true
+  enabled: false
 
 alumet-relay-server:
   enabled: true
@@ -84,7 +84,7 @@ influxdb2:
   enabled: true
 
 global:
-  secret: sf-registry-secret
+  secret: registry-secret
   image:
     registry: ghrc.io/alumet-dev
     pullPolicy: IfNotPresent

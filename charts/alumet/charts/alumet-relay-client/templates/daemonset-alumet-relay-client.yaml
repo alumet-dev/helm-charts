@@ -32,7 +32,7 @@ spec:
 
       initContainers:
         - name: wait-for-alumet-server
-          image: {{ .Values.global.image.registry }}/busybox:latest
+          image: docker.io/busybox:latest
           command: [
             'sh',
             '-c',
