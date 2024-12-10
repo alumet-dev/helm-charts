@@ -28,7 +28,7 @@ Its configuration is set in a config map
 ## ALUMET relay client
 
 It collects the metrics of the kubernetes nodes where it is running and sends them to ALUMET  relay server.
-The default configuration is coorectly set-up to allow communication between ALMUET client and ALUMET server. 
+The default configuration is correctly set-up to allow communication between ALMUET client and ALUMET server. 
 The default port is 50051 and can be change using the global helm variable: global.service.port
 You can activate or deactivate a plugin using a helm variable:
 alumet-relay-client.plugins.K8s.enable="true"
@@ -39,6 +39,11 @@ alumet-relay-client.plugins.procfs.enable="true"
 alumet-relay-client.plugins.perf.enable="true"
 
 Its configuration is set in a config map 
+
+## ALUMET API
+
+An API rest it exposed the data stored in influxdb to retrieve the metrics.
+The default configuration does not installed this component.
 
 ## Influxdb 
 

@@ -21,18 +21,18 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "0.7"
+appVersion: "0.7.0-alpha-1
 
 dependencies:
 - name: influxdb2
   version: 2.1.2
   condition: influxdb2.enabled
 - name: alumet-relay-server
-  version: 0.7
+  version: 0.7.0-alpha-2.1
   condition: alumet-relay-server.enabled
 - name: alumet-relay-client
-  version: 0.7
+  version: 0.7.0-alpha-3.1
   condition: alumet-relay-client.enabled
 - name: alumet-api
-  version: 0.7
+  version: 0.7.0-alpha-1
   condition: alumet-api.enabled  
