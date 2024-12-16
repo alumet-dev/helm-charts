@@ -36,7 +36,7 @@ spec:
               mountPath: /config.json
               subPath: config.json
           ports:
-            - containerPort: {{ .Values.global.service.port }}
+            - containerPort: {{ .Values.service.port }}
           securityContext:
             capabilities:
               add: [{{ .Values.securityContext.capabilities }}]
@@ -79,9 +79,9 @@ kind: Service
 metadata:
   name: {{ template "alumet-api.fullname" . }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   selector:
     app: alumet-api
   ports:
-    - port: 80
+    - port: {{ .Values.service.port }}
 

@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "alumet-api.fullname" . }}:{{ .Values.global.service.port }}']
+      args: ['{{ include "alumet-api.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

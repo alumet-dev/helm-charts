@@ -36,7 +36,7 @@ spec:
           command: [
             'sh',
             '-c',
-            'until nc -vz {{ .Release.Name }}-alumet-relay-server {{ .Values.global.service.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
+            'until nc -vz {{ .Release.Name }}-alumet-relay-server {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
           ]
 
       containers:
@@ -123,10 +123,10 @@ data:
     enable = {{ .Values.plugins.procfs.enable }}
 
     [plugins.relay-client]
-    client_name = "alumet-client"
-    relay_server = "{{ .Release.Name }}-alumet-relay-server:{{ .Values.global.service.port }}"
-    buffer_max_length = 200
-    buffer_timeout = "30s"
+    client_name = "{{ .Values.plugins.relay_client.client_name }}"
+    relay_server = "{{ .Release.Name }}-alumet-relay-server:{{ .Values.plugins.relay_client.port }}"
+    buffer_max_length = {{ .Values.plugins.relay_client.buffer_max_length }}
+    buffer_timeout = "{{ .Values.plugins.relay_client.buffer_timeout }}"
     
     [plugins.EnergyEstimationTdpPlugin]
     enable = {{ .Values.plugins.EnergyEstimationTdpPlugin.enable }}

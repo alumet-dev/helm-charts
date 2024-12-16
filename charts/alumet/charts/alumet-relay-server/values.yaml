@@ -49,7 +49,10 @@ tolerations: []
 
 affinity: {}
 
-#influxdb: For ALUMET packaging, all values are defined on upper layer (as global values)
+
+service:
+  type: ClusterIP
+  port: 50051
 
 # set environment variables for log and trace level  
 env:
@@ -63,5 +66,12 @@ cmd:
 plugins:
   influxdb:
     enable: true
+    # host is set with release name of influxdb in deployment.yaml file
+    #host = "http://{{ .Release.Name }}-influxdb2:80"
+    token: ""
+    organization: "influxdata"
+    bucket: "default"
+    attributes_as: "tag"
+
   csv:
     enable: true

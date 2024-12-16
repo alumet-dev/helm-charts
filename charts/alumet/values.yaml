@@ -73,28 +73,34 @@ affinity: {}
 
 alumet-api:
   enabled: false
+  influxdb: 
+    token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
+    organization: "influxdata"
+    bucket: "default"
 
 alumet-relay-server:
   enabled: true
+  plugins:
+    influxdb:
+      enable: true
+      token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
+      organization: "influxdata"
+      bucket: "default"
+      attributes_as: "tag"
 
 alumet-relay-client:
   enabled: true
 
 influxdb2:
   enabled: true
+  attributes_as: "tag"
+  adminUser:
+    bucket: default
+    token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
+    organization: "influxdata"
+
 
 global:
   secret: registry-secret
   image:
     registry: ghrc.io/alumet-dev
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
-  service:
-    type: ClusterIP
-    port: 50051
-  influxdb:
-    token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
-    bucket: default
-    organization: "influxdata"
-    attributes_as: "tag"

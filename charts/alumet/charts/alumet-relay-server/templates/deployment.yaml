@@ -42,7 +42,7 @@ spec:
             - name: RUST_BACKTRACE
               value: "{{ .Values.env.RUST_BACKTRACE }}"
           ports:
-            - containerPort: {{ .Values.global.service.port }}
+            - containerPort: {{ .Values.service.port }}
           securityContext:
             capabilities:
               add: [{{ .Values.securityContext.capabilities }}]
@@ -71,14 +71,14 @@ data:
     [plugins.influxdb]
     enable = {{ .Values.plugins.influxdb.enable }}
     host = "http://{{ .Release.Name }}-influxdb2:80"
-    token = "{{ .Values.global.influxdb.token }}"
-    org = "{{ .Values.global.influxdb.organization }}"
-    bucket = "{{ .Values.global.influxdb.bucket }}"
-    attributes_as = "{{ .Values.global.influxdb.attributes_as }}"
+    token = "{{ .Values.plugins.influxdb.token }}"
+    org = "{{ .Values.plugins.influxdb.organization }}"
+    bucket = "{{ .Values.plugins.influxdb.bucket }}"
+    attributes_as = "{{ .Values.plugins.influxdb.attributes_as }}"
 
     [plugins.relay-server]
     address = "::"
-    port = {{ .Values.global.service.port }}
+    port = {{ .Values.service.port }}
 
     [plugins.csv]
     enable = {{ .Values.plugins.csv.enable }}
@@ -94,8 +94,8 @@ kind: Service
 metadata:
   name: {{ template "alumet-relay-server.fullname" . }}
 spec:
-  type: {{ .Values.global.service.type }}
+  type: {{ .Values.service.type }}
   selector:
     app: alumet-relay-server
   ports:
-    - port: {{ .Values.global.service.port }}
+    - port: {{ .Values.service.port }}

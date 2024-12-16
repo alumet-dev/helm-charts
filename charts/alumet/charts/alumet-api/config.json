@@ -2,12 +2,12 @@
     "inputs": {
         "influxdb_v2": [
             {
-                "bucket": "{{ .Values.global.influxdb.bucket }}",
+                "bucket": "{{ .Values.influxdb.bucket }}",
                 "host": "{{ .Release.Name }}-influxdb2",
-                "org": "{{ .Values.global.influxdb.organization }}",
-                "port": 80,
-                "token": "{{ .Values.global.influxdb.token }}",
-                "name": "alumet"
+                "org": "{{ .Values.influxdb.organization }}",
+                "port": {{ .Values.influxdb.port }},
+                "token": "{{ .Values.influxdb.token }}",
+                "name": "{{ .Values.influxdb.name }}"
             }
         ]
     },

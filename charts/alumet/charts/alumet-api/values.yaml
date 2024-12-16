@@ -49,7 +49,14 @@ tolerations: []
 
 affinity: {}
 
-#influxdb: all values are defined on upper layer (as global values)
-
-
+influxdb: 
+  bucket: "default"
+  # host is set with release name in config.json file 
+  organization: "influxdata"
+  port: 80
+  token: ""
+  name: "alumet"
   
+service:
+  type: LoadBalancer
+  port: 80

@@ -97,14 +97,17 @@ plugins:
   K8s:
     enable: true
   rapl:
-    enable: true
+    enable: false
   EnergyEstimationTdpPlugin:
     enable: true
   energyAttribution:
-    enable: true
-  Procfs:
-    enable: true
+    enable: false
   perf:
     enable: true
-
-
+  procfs:
+    enable: true
+  relay_client:
+    client_name: alumet-client
+    port: 50051
+    buffer_max_length: 200
+    buffer_timeout: 30s
