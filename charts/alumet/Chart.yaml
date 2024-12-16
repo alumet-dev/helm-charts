@@ -27,6 +27,7 @@ dependencies:
 - name: influxdb2
   version: 2.1.2
   condition: influxdb2.enabled
+  repository: "https://helm.influxdata.com"
 - name: alumet-relay-server
   version: 0.7.0-alpha-2.1
   condition: alumet-relay-server.enabled
