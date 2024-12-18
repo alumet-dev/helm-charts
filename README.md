@@ -21,7 +21,7 @@ You can activate or deactivate a plugin using a helm variable:
 alumet-relay-server.plugins.csv.enable="false" 
 alumet-relay-server.plugins.influxdb.enable="true"
 
-The influxdb parameters (token, buket, organization) can be overiden but the default configuration is set to be able a communication with the influxdb deployed.
+The influxdb parameters (token, bucket, organization) can be overwritten but the default configuration is set to be able a communication with the influxdb deployed.
 
 Its configuration is set in a config map 
 
@@ -39,14 +39,9 @@ alumet-relay-client.plugins.perf.enable="true"
 
 Its configuration is set in a config map 
 
-## ALUMET API
-
-An API rest it exposed the data stored in influxdb to retrieve the metrics.
-The default configuration does not installed this component.
-
 ## Influxdb 
 
-All metrics are wrtitten in influxdb if the plugins Influxdb is enabled.
+All metrics are written in influxdb if the plugins Influxdb is enabled.
 The credentials to logon to the web page of influxdb are defined by the default helm variables:
     influxdb2.adminUser.user
     influxdb2.adminUser.password
