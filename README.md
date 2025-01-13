@@ -4,7 +4,7 @@ HELM charts for deploying ALUMET on K8S clusters.
 Refer to the github page https://github.com/alumet-dev for more details on ALUMET.
 
 The helm chart contains the following subcharts:
-- influxdb: one pod and a LoadBalancer service's type are deployed
+- influxdb: one pod and a service are deployed
 - ALUMet relay client: a pod is deployed on each cluster's node
 - ALUMet relay server: one pod and a LoadBalancer service's type are deployed
 - ALUMet API:  one pod and a LoadBalancer service's type are deployed

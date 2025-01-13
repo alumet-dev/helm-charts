@@ -2,3 +2,27 @@ Installing {{ .Chart.Name }}
 Your installed version  {{ .Chart.Version }}
 Your instance name is:  {{ .Release.Name }}
 
+
+Mon token influxdb decode:
+
+{{- $influxdbSecretName := printf "%s-influxdb2-auth" .Release.Name -}}
+
+My secret name is: {{ printf "%s" $influxdbSecretName }}
+{{ range $index, $secret := (lookup "v1" "Secret" .Release.Namespace "").items }}
+    get secret {{ $secret.metadata.name }}
+    {{- if eq $secret.metadata.name "influxdb2-auth" }}
+        {{- $tokenEnc := index $secret.data "admin-token" }}
+        {{ printf "%s" $tokenEnc | b64dec | quote }}
+    {{- end }}
+{{- end }}
+
+second example:
+{{ $token := index (lookup "v1" "Secret" .Release.Namespace "influxdb2-auth").data "admin-token" }}
+{{ printf "%s" $token | b64dec | quote }}
+
+Test if secret exist:
+{{- if .Values.influxdb2.existingSecret }} 
+the secret is: {{ .Values.influxdb2.existingSecret }}
+{{- else }}
+no secret exist, it should exist a secret...
+{{- end }}
