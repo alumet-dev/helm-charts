@@ -68,10 +68,12 @@ plugins:
     enable: true
     # host is set with release name of influxdb in deployment.yaml file
     #host = "http://{{ .Release.Name }}-influxdb2:80"
-    token: ""
     organization: "influxdata"
     bucket: "default"
     attributes_as: "tag"
+    # token is set using key admin-token defined in the secret that is required.
+    # The secret name is defined in existingSecret variable
+    existingSecret: "influxdb2-auth"
 
   csv:
     enable: true

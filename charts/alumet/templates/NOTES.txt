@@ -2,27 +2,34 @@ Installing {{ .Chart.Name }}
 Your installed version  {{ .Chart.Version }}
 Your instance name is:  {{ .Release.Name }}
 
+{{ $relayServerTable := index .Values "alumet-relay-server" }} 
 
-Mon token influxdb decode:
-
-{{- $influxdbSecretName := printf "%s-influxdb2-auth" .Release.Name -}}
-
-My secret name is: {{ printf "%s" $influxdbSecretName }}
-{{ range $index, $secret := (lookup "v1" "Secret" .Release.Namespace "").items }}
-    get secret {{ $secret.metadata.name }}
-    {{- if eq $secret.metadata.name "influxdb2-auth" }}
-        {{- $tokenEnc := index $secret.data "admin-token" }}
-        {{ printf "%s" $tokenEnc | b64dec | quote }}
+{{- if $relayServerTable.plugins.influxdb.enable }} 
+    influxdb plugin is enabled, a secret to get access to influxdb database must be defined
+    {{ if .Values.influxdb2.existingSecret }}
+        influxdb secret name is: {{ .Values.influxdb2.existingSecret }}
+    {{- else }}
+        no secret exist for influxdb, helm variable influxdb2.existingSecret must be set
     {{- end }}
-{{- end }}
 
-second example:
-{{ $token := index (lookup "v1" "Secret" .Release.Namespace "influxdb2-auth").data "admin-token" }}
-{{ printf "%s" $token | b64dec | quote }}
+    {{ if $relayServerTable.plugins.influxdb.existingSecret }}
+        for alumet-relay-server, influxdb secret name is: {{ $relayServerTable.plugins.influxdb.existingSecret }}
+        
+        {{ if eq $relayServerTable.plugins.influxdb.existingSecret .Values.influxdb2.existingSecret }}
+            alumet-relay-server and influxdb are corectly set, there are using the same secret name
+            {{ $passwd := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.existingSecret ).data "admin-password" }}
+            admin password to get access to influx db is: {{ printf "%s" $passwd | b64dec | quote }}
+            {{ $token := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.existingSecret ).data "admin-token" }}
+            admin token to get access to influx db is: {{ printf "%s" $token | b64dec | quote }}
 
-Test if secret exist:
-{{- if .Values.influxdb2.existingSecret }} 
-the secret is: {{ .Values.influxdb2.existingSecret }}
-{{- else }}
-no secret exist, it should exist a secret...
+        {{- else }}
+        
+            alumet-relay-server and influxdb are not corectly set, there are not using the same secret name.
+            check helm variables: 
+                alumet-relay-server.plugins.influxdb.existingSecret
+                influxdb2.existingSecret
+        {{- end }}
+    {{- else }}
+        no secret exist for plugins.influxdb, helm variable alumet-relay-server.plugins.influxdb.existingSecret must be set
+    {{- end }}    
 {{- end }}

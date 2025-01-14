@@ -41,11 +41,6 @@ spec:
               value: "{{ .Values.env.RUST_LOG }}"
             - name: RUST_BACKTRACE
               value: "{{ .Values.env.RUST_BACKTRACE }}"
-            - name: INFLUXDB_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-influxdb2-auth
-                  key: admin-token
           ports:
             - containerPort: {{ .Values.service.port }}
           securityContext:
@@ -64,25 +59,30 @@ spec:
       affinity:
 
 ---
-# read the influxdb token from secret
-{{ $token := index (lookup "v1" "Secret" .Release.Namespace "influxdb2-auth").data "admin-token" }}
-
+# define variables to decode the influxdb secret
+{{ $secretName := .Values.plugins.influxdb.existingSecret }}
+{{ $token := index (lookup "v1" "Secret" .Release.Namespace $secretName ).data "admin-token" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "alumet-relay-server.fullname" . }}-config
 data:
-
   config: |
     max_update_interval = "500ms"
 
+
+{{- if .Values.plugins.influxdb.enable }}
     [plugins.influxdb]
     enable = {{ .Values.plugins.influxdb.enable }}
     host = "http://{{ .Release.Name }}-influxdb2:80"
-    token = {{ printf "%s" $token | b64dec | quote }}
     org = "{{ .Values.plugins.influxdb.organization }}"
     bucket = "{{ .Values.plugins.influxdb.bucket }}"
     attributes_as = "{{ .Values.plugins.influxdb.attributes_as }}"
+    token = {{ printf "%s" $token | b64dec | quote }}
+{{- else }}
+    [plugins.influxdb]
+    enable = {{ .Values.plugins.influxdb.enable }}
+{{- end }}
 
     [plugins.relay-server]
     address = "::"

@@ -71,19 +71,11 @@ tolerations: []
 
 affinity: {}
 
-alumet-api:
-  enabled: false
-  influxdb: 
-    token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
-    organization: "influxdata"
-    bucket: "default"
-
 alumet-relay-server:
   enabled: true
   plugins:
     influxdb:
       enable: true
-      token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
       organization: "influxdata"
       bucket: "default"
       attributes_as: "tag"
@@ -96,8 +88,8 @@ influxdb2:
   attributes_as: "tag"
   adminUser:
     bucket: default
-    token: "ZlN2WmNidkxmTmRZWTd0SlpFeDN3M2VUYkJ4clZBZEg"
     organization: "influxdata"
+  existingSecret: "influxdb2-auth"
 
 
 global:
