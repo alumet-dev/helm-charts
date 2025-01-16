@@ -7,7 +7,7 @@ Your instance name is:  {{ .Release.Name }}
 {{- if $relayServerTable.plugins.influxdb.enable }} 
     influxdb plugin is enabled, a secret to get access to influxdb database must be defined
     {{ if .Values.influxdb2.existingSecret }}
-        influxdb secret name is: {{ .Values.influxdb2.existingSecret }}
+        influxdb secret name is: {{ .Values.influxdb2.adminUser.existingSecret }}
     {{- else }}
         no secret exist for influxdb, helm variable influxdb2.existingSecret must be set
     {{- end }}
