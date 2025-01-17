@@ -43,11 +43,17 @@ volumeMounts: []
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: {}
-
 tolerations: []
 
-affinity: {}
+# if you want to deploy the alumet-relay-server on a specific node, you need to set the 2 below variables:
+# - nodeSelector.nodeLabelName
+# - nodeSelector.nodelLabelValue
+# For example if you want to specify a node using its role name and deploy on master node:
+# nodeSelector.nodeLabelName: "kubernetes.io/role"
+# nodeSelector.nodeLabelValue: "master"
+nodeSelector:
+  nodeLabelName: ""
+  nodeLabelValue: ""
 
 
 service:
@@ -76,4 +82,4 @@ plugins:
     existingSecret: "influxdb2-auth"
 
   csv:
-    enable: true
+    enable: false

@@ -56,7 +56,10 @@ spec:
         - key: "master"
           operator: "Exists"
           effect: "NoSchedule"
-      affinity:
+      {{- if .Values.nodeSelector.nodeLabelValue }} 
+      nodeSelector:
+        {{ .Values.nodeSelector.nodeLabelName }}: {{ .Values.nodeSelector.nodeLabelValue }}
+      {{- end }}
 
 ---
 # define variables to decode the influxdb secret

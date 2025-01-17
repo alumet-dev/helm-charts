@@ -1,7 +1,7 @@
 apiVersion: v2
 name: alumet
 icon: https://github.com/alumet-dev/alumet/blob/main/readme/alumet-banner.png
-description: A Helm chart for Kubernetes
+description: A Helm chart for ALUMET
 
 # A chart can be either an 'application' or a 'library' chart.
 #
