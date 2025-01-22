@@ -6,30 +6,43 @@ Your instance name is:  {{ .Release.Name }}
 
 {{- if $relayServerTable.plugins.influxdb.enable }} 
     influxdb plugin is enabled, a secret to get access to influxdb database must be defined
-    {{ if .Values.influxdb2.existingSecret }}
+
+    {{ if .Values.influxdb2.adminUser.existingSecret }}
         influxdb secret name is: {{ .Values.influxdb2.adminUser.existingSecret }}
-    {{- else }}
-        no secret exist for influxdb, helm variable influxdb2.existingSecret must be set
-    {{- end }}
 
-    {{ if $relayServerTable.plugins.influxdb.existingSecret }}
-        for alumet-relay-server, influxdb secret name is: {{ $relayServerTable.plugins.influxdb.existingSecret }}
-        
-        {{ if eq $relayServerTable.plugins.influxdb.existingSecret .Values.influxdb2.existingSecret }}
-            alumet-relay-server and influxdb are corectly set, there are using the same secret name
-            {{ $passwd := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.existingSecret ).data "admin-password" }}
-            admin password to get access to influx db is: {{ printf "%s" $passwd | b64dec | quote }}
-            {{ $token := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.existingSecret ).data "admin-token" }}
-            admin token to get access to influx db is: {{ printf "%s" $token | b64dec | quote }}
+        {{ if $relayServerTable.plugins.influxdb.existingSecret }}
+            for alumet-relay-server, influxdb secret name is: {{ $relayServerTable.plugins.influxdb.existingSecret }}
+            
+            {{ if eq $relayServerTable.plugins.influxdb.existingSecret .Values.influxdb2.adminUser.existingSecret }}
+                alumet-relay-server and influxdb are corectly set, there are using the same secret name
+                {{ $passwd := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.adminUser.existingSecret ).data "admin-password" }}
+                admin password to get access to influx db is: {{ printf "%s" $passwd | b64dec | quote }}
+                {{ $token := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.adminUser.existingSecret ).data "admin-token" }}
+                admin token to get access to influx db is: {{ printf "%s" $token | b64dec | quote }}
 
+            {{- else }}        
+                alumet-relay-server and influxdb are not corectly set, there are not using the same secret name.
+                check helm variables: 
+                    alumet-relay-server.plugins.influxdb.existingSecret
+                    influxdb2.existingSecret
+            {{- end }}
         {{- else }}
-        
-            alumet-relay-server and influxdb are not corectly set, there are not using the same secret name.
-            check helm variables: 
-                alumet-relay-server.plugins.influxdb.existingSecret
-                influxdb2.existingSecret
-        {{- end }}
+            No secret name is defined for alumet-relay-server.
+            Please chek the variable alumet-relay-server.plugins.influxdb.existingSecret
+        {{- end }} 
     {{- else }}
-        no secret exist for plugins.influxdb, helm variable alumet-relay-server.plugins.influxdb.existingSecret must be set
-    {{- end }}    
+        {{ if $relayServerTable.plugins.influxdb.existingSecret }}    
+            alumet-relay-server secret name is: {{ $relayServerTable.plugins.influxdb.existingSecret }}
+            alumet-relay-server and influxdb are not corectly set, there are not using the same secret name.
+                check helm variables: 
+                    alumet-relay-server.plugins.influxdb.existingSecret
+                    influxdb2.existingSecret
+        {{- else }}
+            A secret {{ .Release.Name }}-influxdb2-auth was created
+            To get influxdb admin user password, decode the admin-password key from your secret:
+            kubectl  -n {{ .Release.Namespace }} get secret {{ .Release.Name }}-influxdb2-auth -o jsonpath="{.data.admin-password}" | base64 -d
+            To get influxdb token, decode the admin-token key from your secret:
+            kubectl  -n {{ .Release.Namespace }} get secret {{ .Release.Name }}-influxdb2-auth -o jsonpath="{.data.admin-token}" | base64 -d       
+        {{- end }}
+    {{- end }}
 {{- end }}

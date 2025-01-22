@@ -28,6 +28,7 @@ alumet-relay-server:
       organization: "influxdata"
       bucket: "default"
       attributes_as: "tag"
+      existingSecret: ""
 
 alumet-relay-client:
   enabled: true
@@ -38,7 +39,7 @@ influxdb2:
   adminUser:
     bucket: default
     organization: "influxdata"
-  existingSecret: "influxdb2-auth"
+  existingSecret: ""
 
 
 global:

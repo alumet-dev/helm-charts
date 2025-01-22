@@ -9,6 +9,7 @@
     - [deployment nodeSelector](#deployment-nodeselector)
   - [ALUMET relay client](#alumet-relay-client)
   - [Influxdb](#influxdb)
+  - [Deployment example](#deployment-example)
 
 ## description summary
 
@@ -21,10 +22,10 @@ This helm chart contains the following subcharts:
 - ALUMET relay client: a pod is deployed on each cluster's node
 - ALUMET relay server: one pod and a LoadBalancer service's type are deployed
 
-All alumet docker images must be located on the same docker registry. A global variable (global.image.registry) is defined to set the URL path; the default value is: **ghrc.io/alumet-dev**
+All alumet docker images must be located on the same docker registry. A global variable (*global.image.registry*) is defined to set the URL path; the default value is: *ghrc.io/alumet-dev*
 
 A kubernetes secret must de defined to be able to connect to the docker registry for downloading the images.
-The secret's name is defined by the global variable **global.secret**, the default value is: **registry-secret**
+The secret's name is defined by the global variable *global.secret*, the default value is: *registry-secret*
 
 ## ALUMET relay server
 
@@ -45,19 +46,21 @@ The influxdb parameters listed below can be overwritten, the default configurati
 - organization: "influxdata"
 - bucket: "default"
 - attribute_as: "tag"
-- existingSecret: "influxdb2-auth"
+- existingSecret: ""
 
-The token variable is automatically set using the secret defined.
-A secret must be created before installing Alumet relay server and influxdb, 2 variables must be set with the same secret name:
+The token variable is automatically set using the influxdb secret.
+You have 2 choices for creating the influxdb secret:
 
-- influxdb2.adminUser.existingSecret
-- alumet-relay-server.plugins.influxdb.existingSecret
-
-Default secret name is : **influxdb2-auth**
+- let helm creating the secret: in this case it is created by influxdb chart and its name is: *\<release name\>-influxdb2-auth*
+- use an existing secret: in this case, 2 variables must be set with the same secret name:
+  - influxdb2.adminUser.existingSecret
+  - alumet-relay-server.plugins.influxdb.existingSecret
 
 When creating the secret the 2 keys (admin-token and admin-password) must be added, below an example of creating the secret:
 
->kubectl create secret generic influxdb2-auth --from-literal=token=influxToken --from-literal=password=influxPasswd
+```text
+kubectl create secret generic influxdb2-auth --from-literal=token=influxToken --from-literal=password=influxPasswd
+```
 
 ### deployment nodeSelector
 
@@ -72,7 +75,7 @@ For example if you want to specify a node using its role name and deploy on mast
 - alumet-relay-server.nodeSelector.nodeLabelName: "kubernetes.io/role"
 - alumet-relay-server.nodeSelector.nodeLabelValue: "master"
 
-You can also specify a label instead of a role, then you have to set the appropriate key in nodeLabelName and label's value in nodeLabelValue variable.
+You can also specify a label instead of a role, then you have to set the appropriate key in nodeLabelName and label's value in *nodeLabelValue* variable.
 
 ## ALUMET relay client
 
@@ -87,23 +90,71 @@ The default configuration is correctly set-up to allow communication between ALU
 - alumet-relay-client.plugins.procfs.enable="true"
 - alumet-relay-client.plugins.perf.enable="true"
 
-relay client configuration file is created as a config map named:
-\<release name\>-alumet-relay-client-config
+relay client configuration file is created as a config map named: *\<release name\>-alumet-relay-client-config*
 
 ## Influxdb
 
-All metrics are written in influxdb if the plugins Influxdb is enabled (alumet-relay-server.plugins.influxdb.enable="true").
+All metrics are written in influxdb if the plugins Influxdb is enabled (*alumet-relay-server.plugins.influxdb.enable="true"*).
 
 The credentials to logon to the web page of influxdb are defined by a secret. The secret name is defined by the variable:
 
-- influxdb2.existingSecret
+- influxdb2.adminUser.existingSecret
 
-The user login is: **admin**
+The user login is: *admin*
 
 The password is get by decoding the *admin-password* key from the secret using the following command:
->kubectl  get secret \<secret name> -o jsonpath="{.data.admin-password}" | base64 -d
 
-If the secret does not exist, the secret is automatically created and credentials generated randomly; nevertheless to enable alumet relay server accessing to influxdb the secret must be created first before installation ([see above chapter related to alumet-relay-server for more details](#alumet-relay-server))
+```text
+kubectl  get secret \<secret name> -o jsonpath="{.data.admin-password}" | base64 -d
+```
 
-By default the http service is active and can be accessible from outside the k8s cluster on port 80 (default).
+If the secret does not exist, the secret is automatically created and credentials generated randomly.
+
+By default the http service is not actived, if needed, the variable *influxdb2.service.type* must be set with *LoadBalancer* value.
 Refer to <https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2> for more details about influxdb configuration.
+
+## Deployment example
+
+Below an exemple of ALUMET deployment on k8s cluster with 4 nodes. In our example, the influxdb persistence is not activated, if you want persistence , you need to set the variable *influxdb2.persistence.enabled* to *true* and you need to create the persistence volume before deployment.
+
+```text
+helm install alpha alumet --namespace test --set influxdb2.persistence.enabled=false --set global.secret=github-access-secret
+NAME: alpha
+LAST DEPLOYED: Wed Jan 22 09:35:29 2025
+NAMESPACE: test
+STATUS: deployed
+REVISION: 1
+NOTES:
+Installing alumet
+Your installed version  0.1.0
+Your instance name is:  alpha
+
+
+    influxdb plugin is enabled, a secret to get access to influxdb database must be defined
+
+
+
+            A secret alpha-influxdb2-auth was created
+            To get influxdb admin user password, decode the admin-password key from your secret:
+            kubectl  -n test get secret alpha-influxdb2-auth -o jsonpath="{.data.admin-password}" | base64 -d
+            To get influxdb token, decode the admin-token key from your secret:
+            kubectl  -n test get secret alpha-influxdb2-auth -o jsonpath="{.data.admin-token}" | base64 -d
+```
+
+List of pods and services running:
+
+```text
+local@master:$ kubectl -n test get pod
+NAME                                         READY   STATUS    RESTARTS   AGE
+alpha-alumet-relay-client-4mx69              1/1     Running   0          3m8s
+alpha-alumet-relay-client-8245j              1/1     Running   0          3m8s
+alpha-alumet-relay-client-f4rs6              1/1     Running   0          3m8s
+alpha-alumet-relay-client-fx58d              1/1     Running   0          3m8s
+alpha-alumet-relay-client-wpzh8              1/1     Running   0          3m8s
+alpha-alumet-relay-server-675cd95bb4-cmtsg   1/1     Running   0          3m8s
+alpha-influxdb2-0                            1/1     Running   0          3m8s
+local@master:$ kubectl -n test get svc
+NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)        AGE
+alpha-alumet-relay-server   ClusterIP      10.97.163.56     <none>          50051/TCP      3m11s
+alpha-influxdb2             LoadBalancer   10.110.171.103   192.168.1.166   80:32429/TCP   3m11s
+```

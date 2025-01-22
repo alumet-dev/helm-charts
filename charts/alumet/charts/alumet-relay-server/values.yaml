@@ -79,7 +79,7 @@ plugins:
     attributes_as: "tag"
     # token is set using key admin-token defined in the secret that is required.
     # The secret name is defined in existingSecret variable
-    existingSecret: "influxdb2-auth"
+    existingSecret: ""
 
   csv:
     enable: false
