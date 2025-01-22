@@ -45,4 +45,4 @@ influxdb2:
 global:
   secret: registry-secret
   image:
-    registry: ghrc.io/alumet-dev
+    registry: ghcr.io/alumet-dev
