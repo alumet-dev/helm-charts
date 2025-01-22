@@ -117,9 +117,22 @@ Refer to <https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2
 
 Below an exemple of ALUMET deployment on k8s cluster with 4 nodes. In our example, the influxdb persistence is not activated, if you want persistence , you need to set the variable *influxdb2.persistence.enabled* to *true* and you need to create the persistence volume before deployment.
 
+Before executing the *helm install* command you need to add the helm repositories:
+
 ```text
-helm install alpha alumet --namespace test --set influxdb2.persistence.enabled=false --set global.secret=github-access-secret
-NAME: alpha
+helm repo add influxdata https://helm.influxdata.com/
+helm repo add alumet https://alumet-dev.github.io/helm-charts/
+```
+
+And the command to create the secret to get access to the github registry if the docker images are privates:
+
+```text
+kubectl  -n <namesapce> create  secret docker-registry gh-registry-secret --docker-server=ghcr.io/alumet-dev --docker-username=<user> --docker-password=<github token>
+```
+
+```text
+helm test-alumet alumet --namespace test --set influxdb2.persistence.enabled=false --set global.secret=gh-registry-secret
+NAME: test-alumet
 LAST DEPLOYED: Wed Jan 22 09:35:29 2025
 NAMESPACE: test
 STATUS: deployed
@@ -127,34 +140,36 @@ REVISION: 1
 NOTES:
 Installing alumet
 Your installed version  0.1.0
-Your instance name is:  alpha
+Your instance name is:  test-alumet
 
 
     influxdb plugin is enabled, a secret to get access to influxdb database must be defined
 
 
 
-            A secret alpha-influxdb2-auth was created
+            A secret test-alumet-influxdb2-auth was created
             To get influxdb admin user password, decode the admin-password key from your secret:
-            kubectl  -n test get secret alpha-influxdb2-auth -o jsonpath="{.data.admin-password}" | base64 -d
+            kubectl  -n test get secret test-alumet-influxdb2-auth -o jsonpath="{.data.admin-password}" | base64 -d
             To get influxdb token, decode the admin-token key from your secret:
-            kubectl  -n test get secret alpha-influxdb2-auth -o jsonpath="{.data.admin-token}" | base64 -d
+            kubectl  -n test get secret test-alumet-influxdb2-auth -o jsonpath="{.data.admin-token}" | base64 -d
 ```
 
 List of pods and services running:
 
 ```text
 local@master:$ kubectl -n test get pod
-NAME                                         READY   STATUS    RESTARTS   AGE
-alpha-alumet-relay-client-4mx69              1/1     Running   0          3m8s
-alpha-alumet-relay-client-8245j              1/1     Running   0          3m8s
-alpha-alumet-relay-client-f4rs6              1/1     Running   0          3m8s
-alpha-alumet-relay-client-fx58d              1/1     Running   0          3m8s
-alpha-alumet-relay-client-wpzh8              1/1     Running   0          3m8s
-alpha-alumet-relay-server-675cd95bb4-cmtsg   1/1     Running   0          3m8s
-alpha-influxdb2-0                            1/1     Running   0          3m8s
+NAME                                               READY   STATUS                  RESTARTS   AGE
+mongodb-6d6fc5d86f-pttb5                           1/1     Running                 0          19d
+test-alumet-alumet-relay-client-6ssmd              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-h4ntl              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-hsgdl              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-ms2hd              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-zvvbg              1/1     Running                 0          56s
+test-alumet-alumet-relay-server-54d548d487-9v62r   1/1     Running                 0          56s
+test-alumet-influxdb2-0                            1/1     Running                 0          56s
+
 local@master:$ kubectl -n test get svc
 NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)        AGE
-alpha-alumet-relay-server   ClusterIP      10.97.163.56     <none>          50051/TCP      3m11s
-alpha-influxdb2             LoadBalancer   10.110.171.103   192.168.1.166   80:32429/TCP   3m11s
+test-alumet-alumet-relay-server   ClusterIP      10.102.121.155   <none>         50051/TCP      63s
+test-alumet-influxdb2             LoadBalancer   10.104.55.25     192.168.1.48   80:30421/TCP   63s
 ```
