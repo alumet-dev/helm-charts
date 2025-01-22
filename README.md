@@ -1,15 +1,12 @@
-# ALUMET helm-charts
+# ALUMET helm-charts <!-- omit in toc -->
 
-## Table of Contents <!-- omit in toc -->
-
-- [ALUMET helm-charts](#alumet-helm-charts)
-  - [description summary](#description-summary)
-  - [ALUMET relay server](#alumet-relay-server)
-    - [influxdb setting](#influxdb-setting)
-    - [deployment nodeSelector](#deployment-nodeselector)
-  - [ALUMET relay client](#alumet-relay-client)
-  - [Influxdb](#influxdb)
-  - [Deployment example](#deployment-example)
+- [description summary](#description-summary)
+- [ALUMET relay server](#alumet-relay-server)
+  - [influxdb setting](#influxdb-setting)
+  - [deployment nodeSelector](#deployment-nodeselector)
+- [ALUMET relay client](#alumet-relay-client)
+- [Influxdb](#influxdb)
+- [Deployment example](#deployment-example)
 
 ## description summary
 
