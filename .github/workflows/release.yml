@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - feature/first-helm-chart
+      - main
 
 jobs:
   release:
