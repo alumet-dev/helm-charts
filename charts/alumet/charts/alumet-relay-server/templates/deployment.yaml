@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}
+#  name: alumet-relay-server
+
+spec:
+  strategy:
+    rollingUpdate:
+  selector:
+    matchLabels:
+      app: alumet-relay-server
+  template:
+    metadata:
+      labels:
+        app: alumet-relay-server
+    spec:
+      initContainers:
+        - name: wait-for-influxdb
+          image: docker.io/busybox:latest
+          command: [
+            'sh',
+            '-c',
+            'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+          ]
+      containers:
+        - name: alumet-relay-server
+          image: {{ .Values.global.image.registry }}/alumet-relay-server:0.7.0-alpha-2
+          command: ["./alumet-relay-server", "--config", "alumet-collector.toml"]
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "{{ .Values.resources.memory }}"
+              cpu: "{{ .Values.resources.cpu }}"
+          volumeMounts:
+            - name: config
+              mountPath: /alumet-collector.toml
+              subPath: config
+          env:
+            - name: RUST_LOG
+              value: "{{ .Values.env.RUST_LOG }}"
+            - name: RUST_BACKTRACE
+              value: "{{ .Values.env.RUST_BACKTRACE }}"
+            - name: INFLUX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.plugins.influxdb.existingSecret }}
+                  name: {{ .Values.plugins.influxdb.existingSecret }}
+                  {{- else }}
+                  # use the default secret created by influxdb
+                  name: {{ .Release.Name }}-influxdb2-auth
+                  {{- end }}
+                  key: admin-token
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          securityContext:
+            capabilities:
+              add: [{{ .Values.securityContext.capabilities }}]
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "alumet-relay-server.fullname" . }}-config
+      imagePullSecrets:
+        - name: {{ .Values.global.secret }}
+      tolerations:
+        - key: "master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      {{- if .Values.nodeSelector.nodeLabelValue }} 
+      nodeSelector:
+        {{ .Values.nodeSelector.nodeLabelName }}: {{ .Values.nodeSelector.nodeLabelValue }}
+      {{- end }}
+
+---
+# define variables to decode the influxdb secret
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}-config
+data:
+  config: |
+    max_update_interval = "500ms"
+
+
+    [plugins.influxdb]
+    enable = {{ .Values.plugins.influxdb.enable }}
+    host = "http://{{ .Release.Name }}-influxdb2:80"
+    org = "{{ .Values.plugins.influxdb.organization }}"
+    bucket = "{{ .Values.plugins.influxdb.bucket }}"
+    attributes_as = "{{ .Values.plugins.influxdb.attributes_as }}"
+    token = "$INFLUX_TOKEN"
+
+    [plugins.relay-server]
+    address = "::"
+    port = {{ .Values.service.port }}
+
+    [plugins.csv]
+    enable = {{ .Values.plugins.csv.enable }}
+    output_path = "alumet-output.csv"
+    force_flush = true
+    append_unit_to_metric_name = true
+    use_unit_display_name = true
+    csv_delimiter = ";"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: alumet-relay-server
+  ports:
+    - port: {{ .Values.service.port }}

@@ -1,0 +1,85 @@
+# Default values for alumet-relay-server.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities: "SYS_NICE"
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress:
+  enabled: false
+
+resources:
+  cpu: 500m
+  memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+tolerations: []
+
+# if you want to deploy the alumet-relay-server on a specific node, you need to set the 2 below variables:
+# - nodeSelector.nodeLabelName
+# - nodeSelector.nodelLabelValue
+# For example if you want to specify a node using its role name and deploy on master node:
+# nodeSelector.nodeLabelName: "kubernetes.io/role"
+# nodeSelector.nodeLabelValue: "master"
+nodeSelector:
+  nodeLabelName: ""
+  nodeLabelValue: ""
+
+
+service:
+  type: ClusterIP
+  port: 50051
+
+# set environment variables for log and trace level  
+env:
+  RUST_LOG: "info"
+  RUST_BACKTRACE: ""
+  
+cmd:  
+  Arg1: ""
+
+# set enable variable to true/false to activate/unactivate Alumuet plugins
+plugins:
+  influxdb:
+    enable: true
+    # host is set with release name of influxdb in deployment.yaml file
+    #host = "http://{{ .Release.Name }}-influxdb2:80"
+    organization: "influxdata"
+    bucket: "default"
+    attributes_as: "tag"
+    # token is set using key admin-token defined in the secret that is required.
+    # The secret name is defined in existingSecret variable
+    existingSecret: ""
+
+  csv:
+    enable: false

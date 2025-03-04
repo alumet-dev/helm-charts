@@ -1,0 +1,48 @@
+# Default values for alumet.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+ 
+alumet-relay-server:
+  enabled: true
+  plugins:
+    influxdb:
+      enable: true
+      organization: "influxdata"
+      bucket: "default"
+      attributes_as: "tag"
+      existingSecret: ""
+
+alumet-relay-client:
+  enabled: true
+
+influxdb2:
+  enabled: true
+  attributes_as: "tag"
+  adminUser:
+    bucket: default
+    organization: "influxdata"
+  existingSecret: ""
+
+
+global:
+  secret: registry-secret
+  image:
+    registry: ghcr.io/alumet-dev
