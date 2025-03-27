@@ -1,0 +1,10 @@
+{{- if not .Values.configMap.name }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}-config
+data:
+  config: |-
+    {{- (tpl (.Files.Get "alumet-agent.toml" ) .) | nindent 6 }}
+{{- end }}

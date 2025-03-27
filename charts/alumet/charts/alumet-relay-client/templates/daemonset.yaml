@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "alumet-relay-client.fullname" . }}
+
+  
+spec:
+  selector:
+    matchLabels:
+      name: alumet-relay-client
+  template:
+    metadata:
+      labels:
+        name: alumet-relay-client
+    spec:
+      securityContext:
+        # for RAPL plugin we need to be root 
+        runAsUser: 0
+      tolerations:
+      # these tolerations are to have the daemonset runnable on control plane nodes
+      # remove them if your control plane nodes should not run pods
+      #- key: kubernetes.io/hostname
+      # operator: Equal
+      # value: "hostname"
+      # effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: master
+        operator: Exists
+        effect: NoSchedule
+
+      serviceAccountName: {{ .Release.Name }}-alumet-reader
+      automountServiceAccountToken: true
+    {{- if .Values.plugins.relay_client.enable }}
+      # if relay_client plugin is activated, wait starting alumet server 
+      initContainers:
+        - name: wait-for-alumet-server
+          image: docker.io/busybox:latest
+          command: [
+            'sh',
+            '-c',
+            'until nc -vz {{ .Release.Name }}-alumet-relay-server {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
+          ]
+    {{- end }}   
+
+      containers:
+        - name: alumet-relay-client
+          image: {{ .Values.global.image.registry }}/alumet-agent:0.8.0-1_debian_12
+          args: ["--config", "/alumet-agent.toml"]          
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "{{ .Values.resources.memory }}"
+              cpu: "{{ .Values.resources.cpu }}"
+              #nvidia.com/gpu: 1
+          volumeMounts:
+            - name: sysfs
+              mountPath: /sys
+            - name: config
+              mountPath: /alumet-agent.toml
+              subPath: config
+
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: RUST_LOG
+              value: "{{ .Values.env.RUST_LOG }}"
+            - name: RUST_BACKTRACE
+              value: "{{ .Values.env.RUST_BACKTRACE }}"            
+
+
+          securityContext:
+            capabilities:
+              #add: ["CAP_PERFMON", "SYS_NICE"]
+              add: ["SYS_ADMIN", "SYS_NICE"]
+
+      volumes:
+        - name: sysfs
+          hostPath:
+            path: /sys
+            type: "Directory"
+        
+        - name: config
+          configMap:
+          {{- if .Values.configMap.name }}
+            # a config map is created before deployment
+            name: {{ .Values.configMap.name }}
+          {{- else }}
+            name: {{ template "alumet-relay-client.fullname" . }}-config            
+          {{- end }}            
+      
+      imagePullSecrets:
+        - name: {{ .Values.global.secret }}

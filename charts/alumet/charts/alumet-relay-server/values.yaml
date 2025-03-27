@@ -68,6 +68,11 @@ env:
 cmd:  
   Arg1: ""
 
+# by default the config map is created at deployment step, 
+# but you can create your own config map to have a complete custom configuration, in that case you need to declare the config map name
+configMap: 
+  name: ""
+
 # set enable variable to true/false to activate/unactivate Alumuet plugins
 plugins:
   influxdb:
@@ -83,3 +88,15 @@ plugins:
 
   csv:
     enable: false
+
+  mongodb:
+    enable: false
+    
+  opentelemetry:
+    enable: false
+
+  prometheusExporter:
+    enable: false
+  
+  
+  
