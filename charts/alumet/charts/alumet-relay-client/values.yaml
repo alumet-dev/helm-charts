@@ -82,6 +82,12 @@ tolerations: []
 
 affinity: {}
 
+image:
+  # set target version of alumet
+  version: 0.8.0-1
+  # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
+  osVersion: ubuntu_24.04
+
 # set environment variables for log and trace level
 env:
   RUST_LOG: "info"
@@ -108,6 +114,8 @@ plugins:
     tdp: 100
     nb_vcpu: 1
     nb_cpu: 1
+  jetson:
+    enable: false
   k8s:
     enable: true
   nvml:
@@ -128,3 +136,7 @@ plugins:
     port: 50051
     buffer_max_length: 200
     buffer_timeout: 30s
+  socket_control:
+    enable: false
+
+

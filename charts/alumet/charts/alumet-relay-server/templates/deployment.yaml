@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "alumet-relay-server.fullname" . }}
-#  name: alumet-relay-server
-
 spec:
   strategy:
     rollingUpdate:
@@ -14,9 +12,11 @@ spec:
     metadata:
       labels:
         app: alumet-relay-server
+        {{ include "alumet-relay-server.labels" . | nindent 8 }}
     spec:
     {{- if .Values.plugins.influxdb.enable }}
-      # activate init containers only when influxdb plugin is activated
+      {{- if not .Values.plugins.influxdb.host }}
+      # activate init containers only when influxdb plugin is activated and if influxdb is deployed in this chart
       initContainers:
         - name: wait-for-influxdb
           image: docker.io/busybox:latest
@@ -25,11 +25,12 @@ spec:
             '-c',
             'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
           ]
+      {{- end }}
     {{- end }}
       containers:
         - name: alumet-relay-server
-          image: {{ .Values.global.image.registry }}/alumet-agent:0.8.0-1_debian_12
-          args: ["--config", "/alumet-agent.toml"]
+          image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version }}_{{ .Values.image.osVersion }}
+          args: ["--config", "/etc/alumet/alumet-agent.toml"]
           imagePullPolicy: Always
           resources:
             limits:
@@ -37,7 +38,7 @@ spec:
               cpu: "{{ .Values.resources.cpu }}"
           volumeMounts:
             - name: config
-              mountPath: /alumet-agent.toml
+              mountPath: /etc/alumet/alumet-agent.toml
               subPath: config
           env:
             - name: RUST_LOG

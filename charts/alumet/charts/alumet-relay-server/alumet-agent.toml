@@ -1,51 +1,55 @@
-    [plugins.csv]
-    enable = {{ .Values.plugins.csv.enable }}
-    output_path = "alumet-output.csv"
-    force_flush = true
-    append_unit_to_metric_name = true
-    use_unit_display_name = true
-    csv_delimiter = ";"
+[plugins.csv]
+enable = {{ .Values.plugins.csv.enable }}
+output_path = "alumet-output.csv"
+force_flush = true
+append_unit_to_metric_name = true
+use_unit_display_name = true
+csv_delimiter = ";"
 
-    [plugins.influxdb]
-    enable = {{ .Values.plugins.influxdb.enable }}
-    host = "http://{{ .Release.Name }}-influxdb2:80"
-    token = "${INFLUX_TOKEN}"
-    org = "{{ .Values.plugins.influxdb.organization }}"
-    bucket = "{{ .Values.plugins.influxdb.bucket }}"
-    attributes_as = "{{ .Values.plugins.influxdb.attributes_as }}"
+[plugins.influxdb]
+enable = {{ .Values.plugins.influxdb.enable }}
+{{- if .Values.plugins.influxdb.host }}
+host = "{{ .Values.plugins.influxdb.host }}"
+{{- else }}
+host = "http://{{ .Release.Name }}-influxdb2:80"
+{{- end }}
+token = "${INFLUX_TOKEN}"
+org = "{{ .Values.plugins.influxdb.organization }}"
+bucket = "{{ .Values.plugins.influxdb.bucket }}"
+attributes_as = "{{ .Values.plugins.influxdb.attributes_as }}"
 
-    [plugins.mongodb]
-    enable = {{ .Values.plugins.mongodb.enable }}
-    host = "localhost"
-    port = "27017"
-    database = "FILL ME"
-    collection = "FILL ME"
-    username = "FILL ME"
-    password = "FILL ME"
+[plugins.mongodb]
+enable = {{ .Values.plugins.mongodb.enable }}
+host = "{{ .Values.plugins.mongodb.host }}"
+port = "{{ .Values.plugins.mongodb.port }}"
+database = "{{ .Values.plugins.mongodb.database }}"
+collection = "{{ .Values.plugins.mongodb.collection }}"
+username = "{{ .Values.plugins.mongodb.username }}"
+password = "{{ .Values.plugins.mongodb.password }}"
 
-    [plugins.opentelemetry]
-    enable = {{ .Values.plugins.opentelemetry.enable }}
-    collector_host = "http://localhost:4317"
-    prefix = ""
-    suffix = ""
-    append_unit_to_metric_name = true
-    use_unit_display_name = true
-    add_attributes_to_labels = true
+[plugins.opentelemetry]
+enable = {{ .Values.plugins.opentelemetry.enable }}
+collector_host = "http://localhost:4317"
+prefix = ""
+suffix = ""
+append_unit_to_metric_name = true
+use_unit_display_name = true
+add_attributes_to_labels = true
 
-    [plugins.prometheus-exporter]
-    enable = {{ .Values.plugins.prometheusExporter.enable }}
-    host = "0.0.0.0"
-    prefix = ""
-    suffix = "_alumet"
-    port = 9091
-    append_unit_to_metric_name = true
-    use_unit_display_name = true
-    add_attributes_to_labels = true
+[plugins.prometheus-exporter]
+enable = {{ .Values.plugins.prometheusExporter.enable }}
+host = "0.0.0.0"
+prefix = ""
+suffix = "_alumet"
+port = 9091
+append_unit_to_metric_name = true
+use_unit_display_name = true
+add_attributes_to_labels = true
 
-    [plugins.relay-server]
-    enable = true
-    address = "[::]:{{ .Values.service.port }}"
+[plugins.relay-server]
+enable = true
+address = "[::]:{{ .Values.service.port }}"
 
-    [plugins.socket-control]
-    enable = false
-    socket_path = "alumet-control.sock"
+[plugins.socket-control]
+enable = false
+socket_path = "alumet-control.sock"

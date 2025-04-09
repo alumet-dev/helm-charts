@@ -43,6 +43,7 @@ The default configuration is correctly set-up to write in influxdb. The default 
 The influxdb parameters listed below can be overwritten, the default configuration is:
 
 - enable: true
+- host: <set automatically during deployment; can be set manually if influxdb is not deployed inside this chart>
 - organization: "influxdata"
 - bucket: "default"
 - attribute_as: "tag"

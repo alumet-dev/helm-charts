@@ -7,11 +7,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      name: alumet-relay-client
+      app.kubernetes.io/name: alumet-relay-client
   template:
     metadata:
       labels:
-        name: alumet-relay-client
+        {{ include "alumet-relay-client.labels" . | nindent 8 }}
     spec:
       securityContext:
         # for RAPL plugin we need to be root 
@@ -46,8 +46,8 @@ spec:
 
       containers:
         - name: alumet-relay-client
-          image: {{ .Values.global.image.registry }}/alumet-agent:0.8.0-1_debian_12
-          args: ["--config", "/alumet-agent.toml"]          
+          image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version }}_{{ .Values.image.osVersion }}
+          args: ["--config", "/etc/alumet/alumet-agent.toml"]          
           imagePullPolicy: Always
           resources:
             limits:
@@ -58,7 +58,7 @@ spec:
             - name: sysfs
               mountPath: /sys
             - name: config
-              mountPath: /alumet-agent.toml
+              mountPath: /etc/alumet/alumet-agent.toml
               subPath: config
 
           env:
@@ -74,7 +74,6 @@ spec:
 
           securityContext:
             capabilities:
-              #add: ["CAP_PERFMON", "SYS_NICE"]
               add: ["SYS_ADMIN", "SYS_NICE"]
 
       volumes:
