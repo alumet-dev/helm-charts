@@ -21,10 +21,12 @@ This helm chart contains the following subcharts:
 - ALUMET relay client: a pod is deployed on each cluster's node
 - ALUMET relay server: one pod and a LoadBalancer service's type are deployed
 
-All alumet docker images must be located on the same docker registry. A global variable (*global.image.registry*) is defined to set the URL path; the default value is: *ghrc.io/alumet-dev*
+Each subcharts as its own values.yaml file and there is also a values.yaml for the main chart where we overwrite the default values related to subcharts.
+We defined also 2 global variables:
 
-A kubernetes secret must de defined to be able to connect to the docker registry for downloading the images.
-The secret's name is defined by the global variable *global.secret*, the default value is: *registry-secret*
+- global.image.registry : All alumet docker images must be located on the same docker registry. This variable is used to set the URL path of the docker registry, the default value is: *ghrc.io/alumet-dev*
+- global.secret : A kubernetes secret must de defined to be able to connect to the docker registry for downloading the images.
+The secret's name is defined by this variable, the default value is: *registry-secret*
 
 ## ALUMET relay server
 
