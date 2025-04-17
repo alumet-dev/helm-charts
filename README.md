@@ -31,11 +31,13 @@ The secret's name is defined by this variable, the default value is: *registry-s
 ## ALUMET relay server
 
 It receives the metrics by all ALUMET relay client and writes the metrics in the ouput plugin configured (CSV file, influxdb or mongodb).
-The default configuration is correctly set-up to write in influxdb. The default value of helm variables are:
+The default configuration is correctly set-up to write in influxdb. The default value of helm variables related to alumet plugins are:
 
 - alumet-relay-server.plugins.influxdb.enable="true"
 - alumet-relay-server.plugins.csv.enable="false"
 - alumet-relay-server.plugins.mongodb.enable="false"
+- alumet-relay-server.plugins.opentelemetry.enable="false"
+- alumet-relay-server.plugins.prometheusExporter.enable="false"
 
  ALUMET relay server toml configuration file is created as a config map named:
  \<release name\>-alumet-relay-server-config
@@ -99,16 +101,19 @@ It collects the metrics of the kubernetes nodes where it is running and sends th
 The default configuration is correctly set-up to allow communication between ALUMET client and ALUMET server. You can activate or deactivate a plugin using a helm variables, the default configuration is:
 
 - alumet-relay-client.plugins.csv.enable="false"
+- alumet-relay-client.plugins.aggregation.enable="false"
 - alumet-relay-client.plugins.energyAttribution.enable="false"
 - alumet-relay-client.plugins.EnergyEstimationTdpPlugin.enable="false"
+- alumet-relay-client.plugins.jetson.enable="false"
 - alumet-relay-client.plugins.K8s.enable="true"
-- alumet-relay-client.plugins.nvidia.enable="false"
+- alumet-relay-client.plugins.nvml.enable="false"
 - alumet-relay-client.plugins.oar3.enable="false"
 - alumet-relay-client.plugins.oar2.enable="false"
 - alumet-relay-client.plugins.perf.enable="false"
 - alumet-relay-client.plugins.procfs.enable="false"
 - alumet-relay-client.plugins.rapl.enable="false"
 - alumet-relay-client.plugins.relay_client.enable="true"
+- alumet-relay-client.plugins.socket_control.enable="false"
 
 relay client configuration file is created as a config map named: *\<release name\>-alumet-relay-client-config*
 

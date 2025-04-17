@@ -3,6 +3,12 @@ enable = {{ .Values.plugins.oar3.enable }}
 path = "/sys/fs/cgroup/"
 poll_interval = "1s"
 
+[plugins.aggregation]
+enable = {{ .Values.plugins.aggregation.enable }}
+interval = "1m"
+function = "Sum"
+metrics = ["{{ .Values.plugins.aggregation.metrics }}"]
+
 [plugins.csv]
 enable = {{ .Values.plugins.csv.enable }}
 output_path = "alumet-output.csv"
@@ -11,17 +17,18 @@ append_unit_to_metric_name = true
 use_unit_display_name = true
 csv_delimiter = ";"
 
-# [plugins.energy-attribution]
-# enable = {{ .Values.plugins.energyAttribution.enable }}
-# consumed_energy_rapl = "rapl_consumed_energy"
-# hardware_usage_cgroup = "{{ .Values.plugins.energyAttribution.metrics }}"
+[plugins.energy-attribution]
+enable = {{ .Values.plugins.energyAttribution.enable }}
+consumed_energy_rapl = "rapl_consumed_energy"
+hardware_usage_cgroup = "{{ .Values.plugins.energyAttribution.metrics }}"
 
-# [plugins.EnergyEstimationTdpPlugin]
-# enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
-# poll_interval = "1s"
-# tdp = {{ .Values.plugins.EnergyEstimationTdp.tdp }}
-# nb_vcpu = {{ .Values.plugins.EnergyEstimationTdp.nb_vcpu }}
-# nb_cpu = {{ .Values.plugins.EnergyEstimationTdp.nb_cpu }}
+[plugins.energy-estimation-tdp]
+enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
+poll_interval = "1s"
+tdp = {{ .Values.plugins.EnergyEstimationTdp.tdp }}
+nb_vcpu = {{ .Values.plugins.EnergyEstimationTdp.nb_vcpu }}
+nb_cpu = {{ .Values.plugins.EnergyEstimationTdp.nb_cpu }}
+cpu_usage_per_pod = "{{ .Values.plugins.EnergyEstimationTdp.cpu_usage_per_pod }}"
 
 [plugins.jetson]
 enable = {{ .Values.plugins.jetson.enable }}

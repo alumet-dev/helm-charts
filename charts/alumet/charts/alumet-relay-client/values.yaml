@@ -25,13 +25,9 @@ podLabels: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  capabilities: "SYS_ADMIN,SYS_NICE,PERFMON"
+  
 
 ingress:
   enabled: false
@@ -84,7 +80,7 @@ affinity: {}
 
 image:
   # set target version of alumet
-  version: 0.8.0-1
+  version: 0.8.1-2
   # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
   osVersion: ubuntu_24.04
 
@@ -106,14 +102,19 @@ configMap:
 plugins:
   csv:
     enable: false
+  aggregation:
+    enable: false
+    metrics: "cgroup_cpu_usage_user"
   energyAttribution:
     enable: false
     metrics: "cgroup_cpu_usage_user"
   EnergyEstimationTdp:
     enable: false
+    poll_interval: "1s"
     tdp: 100
     nb_vcpu: 1
     nb_cpu: 1
+    cpu_usage_per_pod: "cgroup_cpu_usage_total"
   jetson:
     enable: false
   k8s:

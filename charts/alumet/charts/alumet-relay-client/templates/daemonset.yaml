@@ -74,7 +74,7 @@ spec:
 
           securityContext:
             capabilities:
-              add: ["SYS_ADMIN", "SYS_NICE"]
+              add: [{{ .Values.securityContext.capabilities }}]
 
       volumes:
         - name: sysfs
