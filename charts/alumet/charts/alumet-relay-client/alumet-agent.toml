@@ -1,0 +1,113 @@
+[plugins.OAR3]
+enable = {{ .Values.plugins.oar3.enable }}
+path = "/sys/fs/cgroup/"
+poll_interval = "1s"
+
+[plugins.csv]
+enable = {{ .Values.plugins.csv.enable }}
+output_path = "alumet-output.csv"
+force_flush = true
+append_unit_to_metric_name = true
+use_unit_display_name = true
+csv_delimiter = ";"
+
+# [plugins.energy-attribution]
+# enable = {{ .Values.plugins.energyAttribution.enable }}
+# consumed_energy_rapl = "rapl_consumed_energy"
+# hardware_usage_cgroup = "{{ .Values.plugins.energyAttribution.metrics }}"
+
+# [plugins.EnergyEstimationTdpPlugin]
+# enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
+# poll_interval = "1s"
+# tdp = {{ .Values.plugins.EnergyEstimationTdp.tdp }}
+# nb_vcpu = {{ .Values.plugins.EnergyEstimationTdp.nb_vcpu }}
+# nb_cpu = {{ .Values.plugins.EnergyEstimationTdp.nb_cpu }}
+
+[plugins.jetson]
+enable = {{ .Values.plugins.jetson.enable }}
+poll_interval = "1s"
+flush_interval = "5s"
+
+[plugins.k8s]
+enable = {{ .Values.plugins.k8s.enable }}
+path = "/sys/fs/cgroup/kubepods.slice/"
+poll_interval = "1s"
+kubernetes_api_url = "https://kubernetes.default.svc:443"
+hostname = "${NODE_NAME}"
+token_retrieval = "file"
+
+[plugins.nvml]
+enable = {{ .Values.plugins.nvml.enable }}
+poll_interval = "1s"
+flush_interval = "5s"
+
+[plugins.oar2-plugin]
+enable = {{ .Values.plugins.oar2.enable }}
+path = "/sys/fs/cgroup"
+poll_interval = "1s"
+
+[plugins.perf]
+enable = {{ .Values.plugins.perf.enable }}
+poll_interval = "1s"
+flush_interval = "5s"
+hardware_events = [
+    "REF_CPU_CYCLES",
+    "CACHE_MISSES",
+    "BRANCH_MISSES",
+]
+software_events = []
+cache_events = ["LL_READ_MISS"]
+
+[plugins.procfs]
+enable = {{ .Values.plugins.procfs.enable }}
+
+[plugins.procfs.kernel]
+poll_interval = "5s"
+
+[plugins.procfs.memory]
+poll_interval = "5s"
+metrics = [
+    "MemTotal",
+    "MemFree",
+    "MemAvailable",
+    "Cached",
+    "SwapCached",
+    "Active",
+    "Inactive",
+    "Mapped",
+]
+
+[plugins.procfs.processes]
+refresh_interval = "2s"
+strategy = "watcher"
+
+[[plugins.procfs.processes.groups]]
+exe_regex = ""
+poll_interval = "2s"
+flush_interval = "4s"
+
+[plugins.procfs.processes.events]
+poll_interval = "1s"
+flush_interval = "4s"
+
+[plugins.rapl]
+enable = {{ .Values.plugins.rapl.enable }}
+poll_interval = "1s"
+flush_interval = "5s"
+no_perf_events = false
+
+[plugins.relay-client]
+enable = {{ .Values.plugins.relay_client.enable }}
+client_name = "${NODE_NAME}"
+relay_server = "{{ .Release.Name }}-alumet-relay-server:{{ .Values.plugins.relay_client.port }}"
+buffer_max_length = {{ .Values.plugins.relay_client.buffer_max_length }}
+buffer_timeout = "{{ .Values.plugins.relay_client.buffer_timeout }}"
+
+[plugins.relay-client.retry]
+max_times = 8
+initial_delay = "500ms"
+max_delay = "4s"
+
+[plugins.socket-control]
+enable = {{ .Values.plugins.socket_control.enable }}
+socket_path = "alumet-control.sock"

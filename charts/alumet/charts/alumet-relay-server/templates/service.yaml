@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "alumet-relay-server.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: alumet-relay-server
+  ports:
+    - port: {{ .Values.service.port }}

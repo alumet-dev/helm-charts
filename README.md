@@ -4,7 +4,9 @@
 - [ALUMET relay server](#alumet-relay-server)
   - [influxdb setting](#influxdb-setting)
   - [deployment nodeSelector](#deployment-nodeselector)
+  - [deployment config map relay server](#deployment-config-map-relay-server)
 - [ALUMET relay client](#alumet-relay-client)
+  - [deployment config map relay client](#deployment-config-map-relay-client)
 - [Influxdb](#influxdb)
 - [Deployment example](#deployment-example)
 
@@ -19,20 +21,23 @@ This helm chart contains the following subcharts:
 - ALUMET relay client: a pod is deployed on each cluster's node
 - ALUMET relay server: one pod and a LoadBalancer service's type are deployed
 
-All alumet docker images must be located on the same docker registry. A global variable (*global.image.registry*) is defined to set the URL path; the default value is: *ghrc.io/alumet-dev*
+Each subcharts as its own values.yaml file and there is also a values.yaml for the main chart where we overwrite the default values related to subcharts.
+We defined also 2 global variables:
 
-A kubernetes secret must de defined to be able to connect to the docker registry for downloading the images.
-The secret's name is defined by the global variable *global.secret*, the default value is: *registry-secret*
+- global.image.registry : All alumet docker images must be located on the same docker registry. This variable is used to set the URL path of the docker registry, the default value is: *ghrc.io/alumet-dev*
+- global.secret : A kubernetes secret must de defined to be able to connect to the docker registry for downloading the images.
+The secret's name is defined by this variable, the default value is: *registry-secret*
 
 ## ALUMET relay server
 
-It receives the metrics by all ALUMET relay client and writes the metrics in a CSV file or in an influxdb.
-You can activate or deactivate a plugin using a helm variable:
+It receives the metrics by all ALUMET relay client and writes the metrics in the ouput plugin configured (CSV file, influxdb or mongodb).
+The default configuration is correctly set-up to write in influxdb. The default value of helm variables are:
 
-- alumet-relay-server.plugins.csv.enable="false"
 - alumet-relay-server.plugins.influxdb.enable="true"
+- alumet-relay-server.plugins.csv.enable="false"
+- alumet-relay-server.plugins.mongodb.enable="false"
 
- relay server configuration file is created as a config map named:
+ ALUMET relay server toml configuration file is created as a config map named:
  \<release name\>-alumet-relay-server-config
 
 ### influxdb setting
@@ -40,6 +45,7 @@ You can activate or deactivate a plugin using a helm variable:
 The influxdb parameters listed below can be overwritten, the default configuration is:
 
 - enable: true
+- host: <set automatically during deployment; can be set manually if influxdb is not deployed inside this chart>
 - organization: "influxdata"
 - bucket: "default"
 - attribute_as: "tag"
@@ -74,20 +80,50 @@ For example if you want to specify a node using its role name and deploy on mast
 
 You can also specify a label instead of a role, then you have to set the appropriate key in nodeLabelName and label's value in *nodeLabelValue* variable.
 
+### deployment config map relay server
+
+By default the deployment creates automatically a config map (named *\<release name\>-alumet-relay-server-config*) that contain the toml configuration file for ALUMET relay server. This is a basic configuration that you can modify using the helm variables but the modifications that you can do are limited.
+If you want a specific configuration, you can create your own config map. In that case you need to specify the name of your config map in the helm variable:
+
+- alumet-relay-server.configMap.name="myConfigMap"
+
+To create the config map:
+
+```text
+kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
+```
+
 ## ALUMET relay client
 
 It collects the metrics of the kubernetes nodes where it is running and sends them to ALUMET  relay server.
 The default configuration is correctly set-up to allow communication between ALUMET client and ALUMET server. You can activate or deactivate a plugin using a helm variables, the default configuration is:
 
-- alumet-relay-client.plugins.K8s.enable="true"
-- alumet-relay-client.plugins.rapl.enable="false"
-- alumet-relay-client.plugins.EnergyEstimationTdpPlugin.enable="true"
+- alumet-relay-client.plugins.csv.enable="false"
 - alumet-relay-client.plugins.energyAttribution.enable="false"
-- alumet-relay-client.plugins.perf.enable="true"
-- alumet-relay-client.plugins.procfs.enable="true"
-- alumet-relay-client.plugins.perf.enable="true"
+- alumet-relay-client.plugins.EnergyEstimationTdpPlugin.enable="false"
+- alumet-relay-client.plugins.K8s.enable="true"
+- alumet-relay-client.plugins.nvidia.enable="false"
+- alumet-relay-client.plugins.oar3.enable="false"
+- alumet-relay-client.plugins.oar2.enable="false"
+- alumet-relay-client.plugins.perf.enable="false"
+- alumet-relay-client.plugins.procfs.enable="false"
+- alumet-relay-client.plugins.rapl.enable="false"
+- alumet-relay-client.plugins.relay_client.enable="true"
 
 relay client configuration file is created as a config map named: *\<release name\>-alumet-relay-client-config*
+
+### deployment config map relay client
+
+By default the deployment creates automatically a config map (named *\<release name\>-alumet-relay-client-config*) that contain the toml configuration file for ALUMET relay server. This is a basic configuration that you can modify using the helm variables but the modifications that you can do are limited.
+If you want a specific configuration, you can create your own config map. In that case you need to specify the name of your config map in the helm variable:
+
+- alumet-relay-client.configMap.name="myConfigMap"
+
+To create the config map:
+
+```text
+kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
+```
 
 ## Influxdb
 
@@ -102,7 +138,7 @@ The user login is: *admin*
 The password is get by decoding the *admin-password* key from the secret using the following command:
 
 ```text
-kubectl  get secret \<secret name> -o jsonpath="{.data.admin-password}" | base64 -d
+kubectl  get secret <secret name> -o jsonpath="{.data.admin-password}" | base64 -d
 ```
 
 If the secret does not exist, the secret is automatically created and credentials generated randomly.

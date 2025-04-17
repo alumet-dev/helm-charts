@@ -60,6 +60,12 @@ service:
   type: ClusterIP
   port: 50051
 
+image:
+  # set target version of alumet
+  version: 0.8.0-1
+  # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
+  osVersion: ubuntu_24.04
+
 # set environment variables for log and trace level  
 env:
   RUST_LOG: "info"
@@ -68,12 +74,19 @@ env:
 cmd:  
   Arg1: ""
 
+# by default the config map is created at deployment step, 
+# but you can create your own config map to have a complete custom configuration, in that case you need to declare the config map name
+configMap: 
+  name: ""
+
 # set enable variable to true/false to activate/unactivate Alumuet plugins
 plugins:
   influxdb:
     enable: true
-    # host is set with release name of influxdb in deployment.yaml file
-    #host = "http://{{ .Release.Name }}-influxdb2:80"
+    # if host is empty, it means that influxdb is deployed by the alumet helm chart 
+    # if not it means that we use an external influxdb instance,
+    # format must be: http:<server name>:<port number>
+    host:
     organization: "influxdata"
     bucket: "default"
     attributes_as: "tag"
@@ -83,3 +96,21 @@ plugins:
 
   csv:
     enable: false
+
+  mongodb:
+    enable: false
+    host: mongo
+    port: 2707
+    database: seed
+    collection: ""
+    username: ""
+    password: ""
+    
+  opentelemetry:
+    enable: false
+
+  prometheusExporter:
+    enable: false
+  
+  
+  

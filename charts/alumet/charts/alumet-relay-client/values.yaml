@@ -82,6 +82,12 @@ tolerations: []
 
 affinity: {}
 
+image:
+  # set target version of alumet
+  version: 0.8.0-1
+  # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
+  osVersion: ubuntu_24.04
+
 # set environment variables for log and trace level
 env:
   RUST_LOG: "info"
@@ -91,23 +97,46 @@ env:
 cmd:  
   Arg1: ""
 
-
+# by default the config map is created at deployment step, 
+# but you can create your own config map to have a complete custom configuration, in that case you need to declare the config map name
+configMap: 
+  name: ""
+  
 # set enable variable to true/false to activate/unactivate Alumuet plugins
 plugins:
-  K8s:
-    enable: true
-  rapl:
+  csv:
     enable: false
-  EnergyEstimationTdpPlugin:
-    enable: true
   energyAttribution:
     enable: false
+    metrics: "cgroup_cpu_usage_user"
+  EnergyEstimationTdp:
+    enable: false
+    tdp: 100
+    nb_vcpu: 1
+    nb_cpu: 1
+  jetson:
+    enable: false
+  k8s:
+    enable: true
+  nvml:
+    enable: false
+  oar3:
+    enable: false
+  oar2:
+    enable: false
   perf:
-    enable: true
+    enable: false
   procfs:
-    enable: true
+    enable: false      
+  rapl:
+    enable: false
   relay_client:
+    enable: true
     client_name: alumet-client
     port: 50051
     buffer_max_length: 200
     buffer_timeout: 30s
+  socket_control:
+    enable: false
+
+
