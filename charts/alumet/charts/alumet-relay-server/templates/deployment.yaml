@@ -68,9 +68,11 @@ spec:
             name: {{ .Values.configMap.name }}
           {{- else }}
             name: {{ template "alumet-relay-server.fullname" . }}-config            
-          {{- end }}            
+          {{- end }}
+      {{- if .Values.global.secret }}
       imagePullSecrets:
         - name: {{ .Values.global.secret }}
+      {{- end }}
       tolerations:
         - key: "master"
           operator: "Exists"
