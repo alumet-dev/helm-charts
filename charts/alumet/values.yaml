@@ -43,6 +43,7 @@ influxdb2:
 
 
 global:
-  secret: registry-secret
   image:
     registry: ghcr.io/alumet-dev
+  # Use an existing secret as imagePullSecret in the sub charts.
+  # secret: registry-secret

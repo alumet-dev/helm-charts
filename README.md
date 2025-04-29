@@ -25,8 +25,8 @@ Each subcharts as its own values.yaml file and there is also a values.yaml for t
 We defined also 2 global variables:
 
 - global.image.registry : All alumet docker images must be located on the same docker registry. This variable is used to set the URL path of the docker registry, the default value is: *ghrc.io/alumet-dev*
-- global.secret : A kubernetes secret must de defined to be able to connect to the docker registry for downloading the images.
-The secret's name is defined by this variable, the default value is: *registry-secret*
+- global.secret : A kubernetes secret can de defined to be able to connect to the docker registry for downloading the images.
+The secret's name is defined by this variable, it is not set by default.
 
 ## ALUMET relay server
 

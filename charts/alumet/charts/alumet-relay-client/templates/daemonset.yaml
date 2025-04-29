@@ -69,8 +69,7 @@ spec:
             - name: RUST_LOG
               value: "{{ .Values.env.RUST_LOG }}"
             - name: RUST_BACKTRACE
-              value: "{{ .Values.env.RUST_BACKTRACE }}"            
-
+              value: "{{ .Values.env.RUST_BACKTRACE }}"
 
           securityContext:
             capabilities:
@@ -91,5 +90,7 @@ spec:
             name: {{ template "alumet-relay-client.fullname" . }}-config            
           {{- end }}            
       
+      {{- if .Values.global.secret }}
       imagePullSecrets:
         - name: {{ .Values.global.secret }}
+      {{- end }}
