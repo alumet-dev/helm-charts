@@ -36,7 +36,8 @@ spec:
       # if relay_client plugin is activated, wait starting alumet server 
       initContainers:
         - name: wait-for-alumet-server
-          image: docker.io/busybox:latest
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
           command: [
             'sh',
             '-c',
@@ -48,7 +49,7 @@ spec:
         - name: alumet-relay-client
           image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version }}_{{ .Values.image.osVersion }}
           args: ["--config", "/etc/alumet/alumet-agent.toml"]          
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: "{{ .Values.resources.memory }}"
