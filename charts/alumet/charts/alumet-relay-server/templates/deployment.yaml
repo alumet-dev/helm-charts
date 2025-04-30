@@ -19,11 +19,12 @@ spec:
       # activate init containers only when influxdb plugin is activated and if influxdb is deployed in this chart
       initContainers:
         - name: wait-for-influxdb
-          image: docker.io/busybox:latest
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
           command: [
             'sh',
             '-c',
-            'until nc -vz {{ .Release.Name }}-influxdb2 80; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+            'until wget -nv -t1 --spider "http://{{ .Release.Name }}-influxdb2:80/health"; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
           ]
       {{- end }}
     {{- end }}
@@ -31,7 +32,7 @@ spec:
         - name: alumet-relay-server
           image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version }}_{{ .Values.image.osVersion }}
           args: ["--config", "/etc/alumet/alumet-agent.toml"]
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: "{{ .Values.resources.memory }}"
