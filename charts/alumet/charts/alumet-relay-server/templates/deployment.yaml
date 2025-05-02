@@ -60,7 +60,7 @@ spec:
                   # use the default secret created by influxdb
                   name: {{ .Release.Name }}-influxdb2-auth
                   {{- end }}
-                  key: admin-toke
+                  key: admin-token
             {{- end }}
           ports:
             - containerPort: {{ .Values.service.port }}
