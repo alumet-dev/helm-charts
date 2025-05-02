@@ -50,8 +50,8 @@ spec:
               value: "{{ .Values.env.RUST_LOG }}"
             - name: RUST_BACKTRACE
               value: "{{ .Values.env.RUST_BACKTRACE }}"
+            {{- if .Values.plugins.influxdb.enable }}
             - name: INFLUX_TOKEN
-              {{- if .Values.plugins.influxdb.enable }}
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.plugins.influxdb.existingSecret }}
@@ -60,10 +60,8 @@ spec:
                   # use the default secret created by influxdb
                   name: {{ .Release.Name }}-influxdb2-auth
                   {{- end }}
-                  key: admin-token
-              {{- else }}
-              value: "not-needed"
-              {{- end }}
+                  key: admin-toke
+            {{- end }}
           ports:
             - containerPort: {{ .Values.service.port }}
               name: relay
