@@ -18,10 +18,13 @@ Refer to the github page <https://github.com/alumet-dev> for more details on ALU
 This helm chart contains the following subcharts:
 
 - influxdb: one pod and a service are deployed
-- ALUMET relay client: a pod is deployed on each cluster's node
+- ALUMET relay client: a pod is deployed on each cluster's node as a daemonset.
 - ALUMET relay server: one pod and a LoadBalancer service's type are deployed
 
 Each subcharts as its own values.yaml file and there is also a values.yaml for the main chart where we overwrite the default values related to subcharts.
+
+The chart has been tested with the Relay clients-server strategy and also with a client-only deployment exposing metrics via prometheus exporter consumed by a standard prometheus-kube-stack (the pod is annotatated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically).
+
 We defined also 2 global variables:
 
 - global.image.registry : All alumet docker images must be located on the same docker registry. This variable is used to set the URL path of the docker registry, the default value is: *ghrc.io/alumet-dev*
@@ -30,7 +33,7 @@ The secret's name is defined by this variable, it is not set by default.
 
 ## ALUMET relay server
 
-It receives the metrics by all ALUMET relay client and writes the metrics in the ouput plugin configured (CSV file, influxdb or mongodb).
+It receives the metrics by all ALUMET relay client and writes the metrics in the ouput plugin configured (CSV file, influxdb, mongodb, as a prometheus exporter or opentelemetry).
 The default configuration is correctly set-up to write in influxdb. The default value of helm variables related to alumet plugins are:
 
 - alumet-relay-server.plugins.influxdb.enable="true"
@@ -114,6 +117,8 @@ The default configuration is correctly set-up to allow communication between ALU
 - alumet-relay-client.plugins.rapl.enable="false"
 - alumet-relay-client.plugins.relay_client.enable="true"
 - alumet-relay-client.plugins.socket_control.enable="false"
+- alumet-relay-client.plugins.opentelemetry.enable="false"
+- alumet-relay-client.plugins.prometheusExporter.enable="false"
 
 relay client configuration file is created as a config map named: *\<release name\>-alumet-relay-client-config*
 

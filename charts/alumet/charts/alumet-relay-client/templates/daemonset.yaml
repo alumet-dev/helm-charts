@@ -2,14 +2,16 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ template "alumet-relay-client.fullname" . }}
-
-  
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: alumet-relay-client
   template:
     metadata:
+      {{- if .Values.plugins.prometheusExporter.enable }}
+      annotations:
+        prometheus.io/scrape: 'true'
+      {{ end }}
       labels:
         {{ include "alumet-relay-client.labels" . | nindent 8 }}
     spec:
@@ -61,7 +63,11 @@ spec:
             - name: config
               mountPath: /etc/alumet/alumet-agent.toml
               subPath: config
-
+          {{- if .Values.plugins.prometheusExporter.enable }}
+          ports:
+            - containerPort: {{ .Values.plugins.prometheusExporter.port }}
+              name: "exporter"
+          {{ end }}
           env:
             - name: NODE_NAME
               valueFrom:
