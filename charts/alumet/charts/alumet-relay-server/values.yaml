@@ -111,6 +111,7 @@ plugins:
 
   prometheusExporter:
     enable: false
+    port: 9091
   
   
   

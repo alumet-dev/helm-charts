@@ -118,3 +118,22 @@ max_delay = "4s"
 [plugins.socket-control]
 enable = {{ .Values.plugins.socket_control.enable }}
 socket_path = "alumet-control.sock"
+
+[plugins.opentelemetry]
+enable = {{ .Values.plugins.opentelemetry.enable }}
+collector_host = "http://localhost:4317"
+prefix = ""
+suffix = ""
+append_unit_to_metric_name = false
+use_unit_display_name = true
+add_attributes_to_labels = true
+
+[plugins.prometheus-exporter]
+enable = {{ .Values.plugins.prometheusExporter.enable }}
+host = "0.0.0.0"
+prefix = ""
+suffix = "_alumet"
+port = 9091
+append_unit_to_metric_name = false
+use_unit_display_name = true
+add_attributes_to_labels = true

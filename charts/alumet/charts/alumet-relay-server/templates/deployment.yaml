@@ -10,6 +10,10 @@ spec:
       app: alumet-relay-server
   template:
     metadata:
+      {{- if .Values.plugins.prometheusExporter.enable }}
+      annotations:
+        prometheus.io/scrape: 'true'
+      {{ end }}
       labels:
         app: alumet-relay-server
         {{ include "alumet-relay-server.labels" . | nindent 8 }}
@@ -46,6 +50,7 @@ spec:
               value: "{{ .Values.env.RUST_LOG }}"
             - name: RUST_BACKTRACE
               value: "{{ .Values.env.RUST_BACKTRACE }}"
+            {{- if .Values.plugins.influxdb.enable }}
             - name: INFLUX_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -56,8 +61,14 @@ spec:
                   name: {{ .Release.Name }}-influxdb2-auth
                   {{- end }}
                   key: admin-token
+            {{- end }}
           ports:
             - containerPort: {{ .Values.service.port }}
+              name: relay
+            {{- if .Values.plugins.prometheusExporter.enable }}
+            - containerPort: {{ .Values.plugins.prometheusExporter.port }}
+              name: "exporter"
+            {{ end }}
           securityContext:
             capabilities:
               add: [{{ .Values.securityContext.capabilities }}]

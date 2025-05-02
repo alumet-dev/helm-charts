@@ -8,3 +8,8 @@ spec:
     app: alumet-relay-server
   ports:
     - port: {{ .Values.service.port }}
+      name: "relay"
+    {{- if .Values.plugins.prometheusExporter.enable }}
+    - port: {{ .Values.plugins.prometheusExporter.port }}
+      name: "exporter"
+    {{ end }}
