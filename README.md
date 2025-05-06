@@ -197,7 +197,6 @@ List of pods and services running:
 ```text
 local@master:$ kubectl -n test get pod
 NAME                                               READY   STATUS                  RESTARTS   AGE
-mongodb-6d6fc5d86f-pttb5                           1/1     Running                 0          19d
 test-alumet-alumet-relay-client-6ssmd              1/1     Running                 0          56s
 test-alumet-alumet-relay-client-h4ntl              1/1     Running                 0          56s
 test-alumet-alumet-relay-client-hsgdl              1/1     Running                 0          56s
