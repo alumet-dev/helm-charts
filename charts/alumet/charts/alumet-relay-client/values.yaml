@@ -133,8 +133,8 @@ plugins:
     enable: false
   relay_client:
     enable: true
-    client_name: alumet-client
     port: 50051
+    relay_server:
     buffer_max_length: 200
     buffer_timeout: 30s
   socket_control:

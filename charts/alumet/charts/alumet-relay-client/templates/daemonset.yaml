@@ -43,7 +43,11 @@ spec:
           command: [
             'sh',
             '-c',
+            {{- if .Values.plugins.relay_client.relay_server }}
+            'until nc -vz {{ .Values.plugins.relay_client.relay_server }} {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
+            {{- else }}
             'until nc -vz {{ .Release.Name }}-alumet-relay-server {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
+            {{- end }}
           ]
     {{- end }}   
 
