@@ -139,3 +139,8 @@ plugins:
     buffer_timeout: 30s
   socket_control:
     enable: false
+  opentelemetry:
+    enable: false
+  prometheusExporter:
+    enable: false
+    port: 9091

@@ -1,0 +1,13 @@
+{{- if .Values.plugins.prometheusExporter.enable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "alumet-relay-client.fullname" . }}
+spec:
+  type: ClusterIP
+  selector:
+    app: alumet-relay-client
+  ports:
+    - port: {{ .Values.plugins.prometheusExporter.port }}
+      name: "exporter"
+{{ end }}
