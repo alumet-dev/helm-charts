@@ -41,7 +41,7 @@ path = "/sys/fs/cgroup/kubepods.slice/"
 poll_interval = "1s"
 kubernetes_api_url = "https://kubernetes.default.svc:443"
 hostname = "${NODE_NAME}"
-token_retrieval = "file"
+token_retrieval = { file = "/var/run/secrets/kubernetes.io/serviceaccount/token" }
 
 [plugins.nvml]
 enable = {{ .Values.plugins.nvml.enable }}
