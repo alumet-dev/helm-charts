@@ -62,7 +62,7 @@ service:
 
 image:
   # set target version of alumet
-  version: 0.8.2-1
+  version: 0.8.3-1
   # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
   osVersion: ubuntu_24.04
 
