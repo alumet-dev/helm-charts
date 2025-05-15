@@ -104,17 +104,17 @@ plugins:
     enable: false
   aggregation:
     enable: false
-    metrics: "cgroup_cpu_usage_user"
+    metrics: "cpu_time_delta"
   energyAttribution:
     enable: false
-    metrics: "cgroup_cpu_usage_user"
+    metrics: "cpu_time_delta"
   EnergyEstimationTdp:
     enable: false
     poll_interval: "1s"
     tdp: 100
     nb_vcpu: 1
     nb_cpu: 1
-    cpu_usage_per_pod: "cgroup_cpu_usage_total"
+    cpu_usage_per_pod: "cpu_time_delta"
   jetson:
     enable: false
   k8s:
