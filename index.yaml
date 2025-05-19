@@ -3,6 +3,30 @@ entries:
   alumet:
   - apiVersion: v2
     appVersion: 0.8.3
+    created: "2025-05-19T12:41:29.302250537Z"
+    dependencies:
+    - condition: influxdb2.enabled
+      name: influxdb2
+      repository: https://helm.influxdata.com
+      version: 2.1.2
+    - condition: alumet-relay-server.enabled
+      name: alumet-relay-server
+      repository: ""
+      version: 0.2.6
+    - condition: alumet-relay-client.enabled
+      name: alumet-relay-client
+      repository: ""
+      version: 0.2.7
+    description: A Helm chart for ALUMET
+    digest: abea95b9db12d3cd76e4bcab94874e3eaa86989e66f5f62ae4cfee796c785001
+    icon: https://github.com/alumet-dev/alumet/blob/main/readme/alumet-banner.png
+    name: alumet
+    type: application
+    urls:
+    - https://github.com/alumet-dev/helm-charts/releases/download/alumet-0.2.7/alumet-0.2.7.tgz
+    version: 0.2.7
+  - apiVersion: v2
+    appVersion: 0.8.3
     created: "2025-05-15T09:16:53.272316901Z"
     dependencies:
     - condition: influxdb2.enabled
@@ -196,4 +220,4 @@ entries:
     urls:
     - https://github.com/alumet-dev/helm-charts/releases/download/alumet-0.1.0/alumet-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-15T09:16:53.272352327Z"
+generated: "2025-05-19T12:41:29.302298115Z"
