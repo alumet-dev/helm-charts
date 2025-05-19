@@ -174,7 +174,7 @@ kubectl  -n <namesapce> create  secret docker-registry gh-registry-secret --dock
 ```
 
 ```text
-helm test-alumet alumet --namespace test --set influxdb2.persistence.enabled=false --set global.secret=gh-registry-secret
+helm install test-alumet alumet --namespace test --set influxdb2.persistence.enabled=false --set global.secret=gh-registry-secret
 NAME: test-alumet
 LAST DEPLOYED: Wed Jan 22 09:35:29 2025
 NAMESPACE: test
@@ -202,7 +202,6 @@ List of pods and services running:
 ```text
 local@master:$ kubectl -n test get pod
 NAME                                               READY   STATUS                  RESTARTS   AGE
-mongodb-6d6fc5d86f-pttb5                           1/1     Running                 0          19d
 test-alumet-alumet-relay-client-6ssmd              1/1     Running                 0          56s
 test-alumet-alumet-relay-client-h4ntl              1/1     Running                 0          56s
 test-alumet-alumet-relay-client-hsgdl              1/1     Running                 0          56s
