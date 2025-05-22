@@ -108,6 +108,8 @@ plugins:
   energyAttribution:
     enable: false
     metrics: "cpu_time_delta"
+    filter:
+      kind: "total"
   EnergyEstimationTdp:
     enable: false
     poll_interval: "1s"
