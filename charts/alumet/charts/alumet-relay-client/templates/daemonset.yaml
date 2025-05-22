@@ -49,7 +49,7 @@ spec:
 
       containers:
         - name: alumet-relay-client
-          image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version }}_{{ .Values.image.osVersion }}
+          image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version | default .Chart.AppVersion }}_{{ .Values.image.osVersion }}
           args: ["--config", "/etc/alumet/alumet-agent.toml"]          
           imagePullPolicy: IfNotPresent
           resources:
