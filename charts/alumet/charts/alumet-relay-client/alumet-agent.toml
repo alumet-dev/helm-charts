@@ -19,8 +19,14 @@ csv_delimiter = ";"
 
 [plugins.energy-attribution]
 enable = {{ .Values.plugins.energyAttribution.enable }}
-consumed_energy_rapl = "rapl_consumed_energy"
-hardware_usage_cgroup = "{{ .Values.plugins.energyAttribution.metrics }}"
+consumed_energy_metric_name = "rapl_consumed_energy"
+hardware_usage_metric_name = "{{ .Values.plugins.energyAttribution.metrics }}"
+{{ if .Values.plugins.energyAttribution.filter }}
+[plugins.energy-attribution.hardware_usage_metric_filter]
+{{- range $key, $value := .Values.plugins.energyAttribution.filter }}
+"{{ $key }}" = "{{ $value }}"
+{{- end }}
+{{- end }}
 
 [plugins.energy-estimation-tdp]
 enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
