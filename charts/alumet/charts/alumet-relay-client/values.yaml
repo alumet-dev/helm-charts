@@ -121,6 +121,7 @@ plugins:
     enable: false
   k8s:
     enable: true
+    kubepods_path: "/sys/fs/cgroup/kubepods.slice/"
   nvml:
     enable: false
   oar3:

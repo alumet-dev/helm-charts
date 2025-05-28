@@ -43,7 +43,7 @@ flush_interval = "5s"
 
 [plugins.k8s]
 enable = {{ .Values.plugins.k8s.enable }}
-path = "/sys/fs/cgroup/kubepods.slice/"
+path = {{ .Values.plugins.k8s.kubepods_path }}
 poll_interval = "1s"
 kubernetes_api_url = "https://kubernetes.default.svc:443"
 hostname = "${NODE_NAME}"
@@ -139,7 +139,7 @@ enable = {{ .Values.plugins.prometheusExporter.enable }}
 host = "0.0.0.0"
 prefix = ""
 suffix = "_alumet"
-port = 9091
+port = 9090
 append_unit_to_metric_name = false
 use_unit_display_name = true
 add_attributes_to_labels = true
