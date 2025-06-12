@@ -108,6 +108,8 @@ plugins:
     
   opentelemetry:
     enable: false
+    collector_host: "http://localhost:4317"
+    push_interval_seconds: 5
 
   prometheusExporter:
     enable: false

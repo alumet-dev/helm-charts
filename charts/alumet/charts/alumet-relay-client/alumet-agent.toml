@@ -30,7 +30,7 @@ hardware_usage_metric_name = "{{ .Values.plugins.energyAttribution.metrics }}"
 
 [plugins.energy-estimation-tdp]
 enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
-poll_interval = "1s"
+poll_interval = "{{ .Values.plugins.EnergyEstimationTdp.poll_interval }}"
 tdp = {{ .Values.plugins.EnergyEstimationTdp.tdp }}
 nb_vcpu = {{ .Values.plugins.EnergyEstimationTdp.nb_vcpu }}
 nb_cpu = {{ .Values.plugins.EnergyEstimationTdp.nb_cpu }}
@@ -43,8 +43,8 @@ flush_interval = "5s"
 
 [plugins.k8s]
 enable = {{ .Values.plugins.k8s.enable }}
-path = {{ .Values.plugins.k8s.kubepods_path }}
-poll_interval = "1s"
+path = "{{ .Values.plugins.k8s.kubepods_path }}"
+poll_interval = "{{ .Values.plugins.k8s.poll_interval }}"
 kubernetes_api_url = "https://kubernetes.default.svc:443"
 hostname = "${NODE_NAME}"
 token_retrieval = { file = "/var/run/secrets/kubernetes.io/serviceaccount/token" }
@@ -105,8 +105,8 @@ flush_interval = "4s"
 
 [plugins.rapl]
 enable = {{ .Values.plugins.rapl.enable }}
-poll_interval = "1s"
-flush_interval = "5s"
+poll_interval = "{{ .Values.plugins.rapl.poll_interval }}"
+flush_interval = "{{ .Values.plugins.rapl.flush_interval }}"
 no_perf_events = false
 
 [plugins.relay-client]
@@ -127,9 +127,10 @@ socket_path = "alumet-control.sock"
 
 [plugins.opentelemetry]
 enable = {{ .Values.plugins.opentelemetry.enable }}
-collector_host = "http://localhost:4317"
+collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
+push_interval_seconds = {{ .Values.plugins.opentelemetry.push_interval_seconds }}
 prefix = ""
-suffix = ""
+suffix = "_alumet"
 append_unit_to_metric_name = false
 use_unit_display_name = true
 add_attributes_to_labels = true
