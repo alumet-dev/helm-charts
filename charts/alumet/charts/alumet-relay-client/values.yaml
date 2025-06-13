@@ -112,7 +112,7 @@ plugins:
       kind: "total"
   EnergyEstimationTdp:
     enable: false
-    poll_interval: "1s"
+    poll_interval: 1s
     tdp: 100
     nb_vcpu: 1
     nb_cpu: 1
@@ -122,6 +122,7 @@ plugins:
   k8s:
     enable: true
     kubepods_path: "/sys/fs/cgroup/kubepods.slice/"
+    poll_interval: 1s
   nvml:
     enable: false
   oar3:
@@ -134,6 +135,8 @@ plugins:
     enable: false      
   rapl:
     enable: false
+    poll_interval: 1s
+    flush_interval: 5s
   relay_client:
     enable: true
     port: 50051
@@ -144,6 +147,8 @@ plugins:
     enable: false
   opentelemetry:
     enable: false
+    collector_host: "http://localhost:4317"
+    push_interval_seconds: 5
   prometheusExporter:
     enable: false
     port: 9091
