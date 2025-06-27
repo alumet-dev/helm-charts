@@ -4,6 +4,7 @@
 - [ALUMET relay server](#alumet-relay-server)
   - [influxdb setting](#influxdb-setting)
   - [deployment nodeSelector](#deployment-nodeselector)
+  - [deployment with tolerations](#deployment-with-tolerations)
   - [deployment config map relay server](#deployment-config-map-relay-server)
 - [ALUMET relay client](#alumet-relay-client)
   - [deployment config map relay client](#deployment-config-map-relay-client)
@@ -85,6 +86,19 @@ For example if you want to specify a node using its role name and deploy on mast
 
 You can also specify a label instead of a role, then you have to set the appropriate key in nodeLabelName and label's value in *nodeLabelValue* variable.
 
+### deployment with tolerations
+
+If your cluster's nodes have taints, you can set tolerations to deploy your pod on node with a specific taint.
+To set a toleration on deployment step, you have to set the helm variable *alumet-relay-server.tolerations*, below an example of toleration.
+
+```text
+--set alumet-relay-server.tolerations[0].key=<key name> \
+--set alumet-relay-server.tolerations[0].operator=Exists \
+--set alumet-relay-server.tolerations[0].effect=NoSchedule \
+```
+
+You can add several totlerations tolerations variable is a table.
+
 ### deployment config map relay server
 
 By default the deployment creates automatically a config map (named *\<release name\>-alumet-relay-server-config*) that contain the toml configuration file for ALUMET relay server. This is a basic configuration that you can modify using the helm variables but the modifications that you can do are limited.
@@ -121,6 +135,10 @@ The default configuration is correctly set-up to allow communication between ALU
 - alumet-relay-client.plugins.prometheusExporter.enable="false"
 
 relay client configuration file is created as a config map named: *\<release name\>-alumet-relay-client-config*
+
+As for Alumet relay server, if your cluster's nodes have taints, you can set tolerations to deploy Alumet relay client on node with a specific taint.
+To set a toleration at deployment step, you have to set the helm variable *alumet-relay-client.tolerations*.
+Refer to [deployment with tolerations](#deployment-with-tolerations) for more details.
 
 ### deployment config map relay client
 

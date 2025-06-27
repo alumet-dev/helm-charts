@@ -25,12 +25,15 @@ spec:
       # operator: Equal
       # value: "hostname"
       # effect: NoSchedule
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
-      - key: master
-        operator: Exists
-        effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: master
+          operator: Exists
+          effect: NoSchedule
+      {{- with .Values.tolerations }}
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}          
 
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
