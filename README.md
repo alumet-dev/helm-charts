@@ -88,7 +88,8 @@ You can also specify a label instead of a role, then you have to set the appropr
 
 ### deployment with tolerations
 
-If your cluster's nodes have taints, you can set tolerations to deploy your pod on node with a specific taint.
+If your cluster's nodes have taints, you can set tolerations to allow the pod to be deployed on the tainted nodes.
+
 To set a toleration on deployment step, you have to set the helm variable *alumet-relay-server.tolerations*, below an example of toleration.
 
 ```text
@@ -97,7 +98,7 @@ To set a toleration on deployment step, you have to set the helm variable *alume
 --set alumet-relay-server.tolerations[0].effect=NoSchedule \
 ```
 
-You can add several totlerations tolerations variable is a table.
+You can add several tolerations: the variable is a list of objects.
 
 ### deployment config map relay server
 
