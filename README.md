@@ -100,6 +100,15 @@ To set a toleration on deployment step, you have to set the helm variable *alume
 
 You can add several tolerations: the variable is a list of objects.
 
+Below an example to set a toleration in yaml format:
+
+```yaml
+      tolerations:
+        - key: <key name>
+          operator: Exists
+          effect: NoSchedule
+```
+
 ### deployment config map relay server
 
 By default the deployment creates automatically a config map (named *\<release name\>-alumet-relay-server-config*) that contain the toml configuration file for ALUMET relay server. This is a basic configuration that you can modify using the helm variables but the modifications that you can do are limited.
