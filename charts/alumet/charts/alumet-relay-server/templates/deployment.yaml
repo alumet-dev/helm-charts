@@ -88,7 +88,7 @@ spec:
       tolerations:
       {{- with .Values.tolerations }}
         {{ toYaml . | nindent 8 | trim }}
-      {{- end }}          
+      {{- end }}
       {{- if .Values.nodeSelector.nodeLabelValue }} 
       nodeSelector:
         {{ .Values.nodeSelector.nodeLabelName }}: {{ .Values.nodeSelector.nodeLabelValue }}
