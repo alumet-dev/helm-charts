@@ -103,10 +103,10 @@ You can add several tolerations: the variable is a list of objects.
 Below an example to set a toleration in yaml format:
 
 ```yaml
-      tolerations:
-        - key: <key name>
-          operator: Exists
-          effect: NoSchedule
+tolerations:
+  - key: <key name>
+    operator: Exists
+    effect: NoSchedule
 ```
 
 ### deployment config map relay server

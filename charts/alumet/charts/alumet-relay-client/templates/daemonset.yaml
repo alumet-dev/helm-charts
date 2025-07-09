@@ -19,18 +19,6 @@ spec:
         # for RAPL plugin we need to be root 
         runAsUser: 0
       tolerations:
-      # these tolerations are to have the daemonset runnable on control plane nodes
-      # remove them if your control plane nodes should not run pods
-      #- key: kubernetes.io/hostname
-      # operator: Equal
-      # value: "hostname"
-      # effect: NoSchedule
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-        - key: master
-          operator: Exists
-          effect: NoSchedule
       {{- with .Values.tolerations }}
         {{ toYaml . | nindent 8 | trim }}
       {{- end }}          
