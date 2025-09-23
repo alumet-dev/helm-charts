@@ -1,7 +1,8 @@
-[plugins.OAR3]
-enable = {{ .Values.plugins.oar3.enable }}
-path = "/sys/fs/cgroup/"
+[plugins.oar]
+enable = {{ .Values.plugins.oar.enable }}
+oar_version = "{{ .Values.plugins.oar.version }}"
 poll_interval = "1s"
+jobs_only = {{ .Values.plugins.oar.jobs_only }}
 
 [plugins.aggregation]
 enable = {{ .Values.plugins.aggregation.enable }}
@@ -19,14 +20,26 @@ csv_delimiter = ";"
 
 [plugins.energy-attribution]
 enable = {{ .Values.plugins.energyAttribution.enable }}
-consumed_energy_metric_name = "rapl_consumed_energy"
-hardware_usage_metric_name = "{{ .Values.plugins.energyAttribution.metrics }}"
-{{ if .Values.plugins.energyAttribution.filter }}
-[plugins.energy-attribution.hardware_usage_metric_filter]
-{{- range $key, $value := .Values.plugins.energyAttribution.filter }}
-"{{ $key }}" = "{{ $value }}"
-{{- end }}
-{{- end }}
+
+[plugins.energy-attribution.formulas.attributed_energy]
+# the expression used to compute the final value
+expr = "cpu_energy * cpu_usage / 100.0"
+ref = "cpu_energy"
+
+# Timeseries related to the resources.
+[plugins.energy-attribution.formulas.attributed_energy.per_resource]
+# Defines the timeseries `cpu_energy` that is used in the formula, as the measurement points that have:
+# - the metric `rapl_consumed_energy`,
+# - and the resource kind `"local_machine"`
+# - and the attribute `domain` equal to `package_total`
+cpu_energy = { metric = "rapl_consumed_energy", resource_kind = "local_machine", domain = "package_total" }
+
+# Timeseries related to the resource consumers.
+[plugins.energy-attribution.formulas.attributed_energy.per_consumer]
+# Defines the timeseries `cpu_usage` that is used in the formula, as the measurements points that have:
+# - the metric `cpu_usage_percent`
+# - the attribute `kind` equal to `total`
+cpu_usage = { metric = "cpu_percent", kind = "total" }
 
 [plugins.energy-estimation-tdp]
 enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
@@ -43,21 +56,15 @@ flush_interval = "5s"
 
 [plugins.k8s]
 enable = {{ .Values.plugins.k8s.enable }}
-path = "{{ .Values.plugins.k8s.kubepods_path }}"
 poll_interval = "{{ .Values.plugins.k8s.poll_interval }}"
-kubernetes_api_url = "https://kubernetes.default.svc:443"
-hostname = "${NODE_NAME}"
-token_retrieval = { file = "/var/run/secrets/kubernetes.io/serviceaccount/token" }
+k8s_api_url = "https://kubernetes.default.svc:443"
+k8s_node = "${NODE_NAME}"
+token_retrieval = "file"
 
 [plugins.nvml]
 enable = {{ .Values.plugins.nvml.enable }}
 poll_interval = "1s"
 flush_interval = "5s"
-
-[plugins.oar2-plugin]
-enable = {{ .Values.plugins.oar2.enable }}
-path = "/sys/fs/cgroup"
-poll_interval = "1s"
 
 [plugins.perf]
 enable = {{ .Values.plugins.perf.enable }}
