@@ -125,10 +125,10 @@ plugins:
     poll_interval: 1s
   nvml:
     enable: false
-  oar3:
+  oar:
     enable: false
-  oar2:
-    enable: false
+    version: oar3
+    jobs_only: true
   perf:
     enable: false
   procfs:
