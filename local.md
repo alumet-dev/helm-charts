@@ -44,3 +44,30 @@ alumet-test-alumet-relay-client-rt8jp              0/1     PodInitializing   0  
 alumet-test-alumet-relay-server-5548fff458-z489g   1/1     Running           0          12s
 alumet-test-influxdb2-0                            1/1     Running           0          12s
 ```
+
+## Troubleshooting: Database Credentials and PVC
+
+When uninstalling and reinstalling the helm chart, you may run into issues with the database connection.
+
+```txt
+[2025-09-25T14:06:13Z INFO  alumet::agent::builder] Starting the plugins...
+[2025-09-25T14:06:13Z INFO  plugin_influxdb] Testing connection to InfluxDB...
+[2025-09-25T14:06:13Z ERROR plugin_influxdb::influxdb2] InfluxDB2 client error: HTTP status client error (401 Unauthorized) for url (http://alumet-test-influxdb2/api/v2/write?org=influxdata&bucket=default&precision=ns)
+    Server response: {"code":"unauthorized","message":"unauthorized access"}
+Error: startup failure
+
+Caused by:
+    0: plugin failed to start: influxdb v0.1.0
+    1: Cannot write to InfluxDB host http://alumet-test-influxdb2:80 in org influxdata and bucket default. Please check your configuration.
+    2: HT
+```
+
+To solve this, you can try to delete the database PVC, which is not removed by helm uninstall, before reinstalling the chart.
+A proper uninstallation therefore looks like:
+
+```sh
+helm uninstall alumet-test -n alumet-in-namespace
+kubectl delete pvc alumet-test-influxdb2 -n alumet-in-namespace
+```
+
+Note that this will delete the content of the database, because the persistent volume associated to InfluxDB uses the "Delete" reclaim policy.
