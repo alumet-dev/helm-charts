@@ -23,13 +23,20 @@ minikube image load alumet-image.tar
 Check that the image is available in minikube:
 
 ```sh
-~ ❯❯❯ minikube image ls
+❯❯❯ minikube image ls
 ghcr.io/alumet-dev/alumet-agent:0.9.1-snapshot-1-ubuntu_24.04
 ```
 
 ## Deploy with Helm
 
-As an example, we use the K8S namespace `alumet-in-namespace` and the Helm release name `alumet-test`.
+First, check that the `appVersion` of the `alumet`, `alumet-relay-client` and `alumet-relay-server` match the version of your package.
+In the following example, we set:
+
+```yaml
+appVersion: "0.9.1-snapshot-1"
+```
+
+We use the K8S namespace `alumet-in-namespace` and the Helm release name `alumet-test`.
 
 ```sh
 helm install alumet-test ./charts/alumet -n alumet-in-namespace --create-namespace
@@ -38,7 +45,7 @@ helm install alumet-test ./charts/alumet -n alumet-in-namespace --create-namespa
 Check that the pods have been created:
 
 ```sh
-~/D/T/A/a/helm-charts ❯❯❯ kubectl get pods -n alumet-in-namespace
+❯❯❯ kubectl get pods -n alumet-in-namespace
 NAME                                               READY   STATUS            RESTARTS   AGE
 alumet-test-alumet-relay-client-rt8jp              0/1     PodInitializing   0          12s
 alumet-test-alumet-relay-server-5548fff458-z489g   1/1     Running           0          12s
