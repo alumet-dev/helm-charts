@@ -115,9 +115,12 @@ We defined also 2 global variables:
 - `global.secret`: A kubernetes secret can de defined to be able to connect to the docker registry for downloading the images.
 The secret's name is defined by this variable, it is not set by default.
 
-### Data Storage
+### Data Backends
 
-The chart has been tested with the Relay clients-server strategy and also with a client-only deployment exposing metrics via prometheus exporter consumed by a standard prometheus-kube-stack (the pod is annotatated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically).
+Two backends are available:
+
+- InfluxDb (preferred and default option)
+- Prometheus (the pod is annotatated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically by the exporter)
 
 ## ALUMET relay server
 
