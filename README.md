@@ -1,36 +1,126 @@
-# ALUMET helm-charts <!-- omit in toc -->
+# Helm Charts for Alumet
 
-- [description summary](#description-summary)
-- [ALUMET relay server](#alumet-relay-server)
-  - [influxdb setting](#influxdb-setting)
-  - [deployment nodeSelector](#deployment-nodeselector)
-  - [deployment with tolerations](#deployment-with-tolerations)
-  - [deployment config map relay server](#deployment-config-map-relay-server)
-- [ALUMET relay client](#alumet-relay-client)
-  - [deployment config map relay client](#deployment-config-map-relay-client)
-- [Influxdb](#influxdb)
-- [Deployment example](#deployment-example)
+## Summary
 
-## description summary
+[Alumet](https://github.com/alumet-dev/alumet) is a modular measurement framework and monitoring tool.
 
-HELM charts for deploying ALUMET on K8S clusters.
-Refer to the github page <https://github.com/alumet-dev> for more details on ALUMET.
+This repository contains Helm charts for deploying the standard Alumet agent on K8S clusters.
+The agent is deployed alongside InfluxDB.
 
-This helm chart contains the following subcharts:
+The chart contains the following subcharts:
 
-- influxdb: one pod and a service are deployed
-- ALUMET relay client: a pod is deployed on each cluster's node as a daemonset.
-- ALUMET relay server: one pod and a LoadBalancer service's type are deployed
+- `influxdb`: deploys InfluxDB to store the measurements (one pod and one service)
+- `alumet-relay-client`: deploys a monitoring agent on each node (one pod per node with a daemonset)
+- `alumet-relay-server`: deploys one server that gathers the measurements produced by the clients (one pod and one load balancer service)
 
-Each subcharts as its own values.yaml file and there is also a values.yaml for the main chart where we overwrite the default values related to subcharts.
+Each subcharts has its own `values.yaml` file.
+On top of that, there is a main `values.yaml`, where we overwrite the default values of the subcharts.
 
-The chart has been tested with the Relay clients-server strategy and also with a client-only deployment exposing metrics via prometheus exporter consumed by a standard prometheus-kube-stack (the pod is annotatated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically).
+## Deployment Example
+
+First, add the required repositories to helm:
+
+```sh
+helm repo add influxdata https://helm.influxdata.com/
+helm repo add alumet https://alumet-dev.github.io/helm-charts/
+```
+
+Then, install the chart.
+In this example, we use the `test` namespace and the `test-alumet` release.
+
+```txt
+~ ❯❯❯ helm install test-alumet alumet --namespace test
+
+NAME: test-alumet
+LAST DEPLOYED: Wed Jan 22 09:35:29 2025
+NAMESPACE: test
+STATUS: deployed
+REVISION: 1
+NOTES:
+Installing alumet
+Your installed version  0.1.0
+Your instance name is:  test-alumet
+
+
+    influxdb plugin is enabled, a secret to get access to influxdb database must be defined
+
+
+
+            A secret test-alumet-influxdb2-auth was created
+            To get influxdb admin user password, decode the admin-password key from your secret:
+            kubectl  -n test get secret test-alumet-influxdb2-auth -o jsonpath="{.data.admin-password}" | base64 -d
+            To get influxdb token, decode the admin-token key from your secret:
+            kubectl  -n test get secret test-alumet-influxdb2-auth -o jsonpath="{.data.admin-token}" | base64 -d
+```
+
+Check that the pods have been deployed:
+
+```text
+local@master:$ kubectl -n test get pods
+NAME                                               READY   STATUS                  RESTARTS   AGE
+test-alumet-alumet-relay-client-6ssmd              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-h4ntl              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-hsgdl              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-ms2hd              1/1     Running                 0          56s
+test-alumet-alumet-relay-client-zvvbg              1/1     Running                 0          56s
+test-alumet-alumet-relay-server-54d548d487-9v62r   1/1     Running                 0          56s
+test-alumet-influxdb2-0                            1/1     Running                 0          56s
+
+local@master:$ kubectl -n test get svc
+NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)        AGE
+test-alumet-alumet-relay-server   ClusterIP      10.102.121.155   <none>         50051/TCP      63s
+test-alumet-influxdb2             LoadBalancer   10.104.55.25     192.168.1.48   80:30421/TCP   63s
+```
+
+## Local Testing
+
+To use the helm chart directly from its source, see [Testing the Helm Chart Locally](local.md).
+
+## Using Private Container Images
+
+<!-- markdownlint-disable MD029 -->
+
+To use private images published to the GitHub Container Registry (GHCR), you need to:
+
+1. Create a token that can acces your private registry.
+2. Create a secret `kubectl`:
+
+```sh
+kubectl  -n <namesapce> create  secret docker-registry gh-registry-secret --docker-server=ghcr.io/alumet-dev --docker-username=<user> --docker-password=<github token>
+```
+
+3. When installing the chart, set the `global.secret` variable by appending the following argument:
+
+```sh
+--set global.secret=gh-registry-secret
+```
+
+## Enabling/Disabling InfluxDB Persistence
+
+InfluxDB persistence is controlled by the influxdb chart.
+By default, persistence is **enabled**.
+To disable it, use the following argument with `helm install`:
+
+```sh
+--set influxdb2.persistence.enabled=false
+```
+
+## Configuration Details
+
+## Global Variables
 
 We defined also 2 global variables:
 
-- global.image.registry : All alumet docker images must be located on the same docker registry. This variable is used to set the URL path of the docker registry, the default value is: *ghrc.io/alumet-dev*
-- global.secret : A kubernetes secret can de defined to be able to connect to the docker registry for downloading the images.
+- `global.image.registry`: All alumet docker images must be located on the same docker registry. This variable is used to set the URL path of the docker registry, the default value is: `ghrc.io/alumet-dev`
+- `global.secret`: A kubernetes secret can de defined to be able to connect to the docker registry for downloading the images.
 The secret's name is defined by this variable, it is not set by default.
+
+### Data Backends
+
+Two backends are available:
+
+- InfluxDb (preferred and default option)
+- Prometheus (the pod is annotatated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically by the exporter)
 
 ## ALUMET relay server
 
@@ -132,10 +222,9 @@ The default configuration is correctly set-up to allow communication between ALU
 - alumet-relay-client.plugins.energyAttribution.enable="false"
 - alumet-relay-client.plugins.EnergyEstimationTdpPlugin.enable="false"
 - alumet-relay-client.plugins.jetson.enable="false"
-- alumet-relay-client.plugins.K8s.enable="true"
+- alumet-relay-client.plugins.k8s.enable="true"
 - alumet-relay-client.plugins.nvml.enable="false"
-- alumet-relay-client.plugins.oar3.enable="false"
-- alumet-relay-client.plugins.oar2.enable="false"
+- alumet-relay-client.plugins.oar.enable="false"
 - alumet-relay-client.plugins.perf.enable="false"
 - alumet-relay-client.plugins.procfs.enable="false"
 - alumet-relay-client.plugins.rapl.enable="false"
@@ -163,83 +252,27 @@ To create the config map:
 kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
 ```
 
-## Influxdb
+## InfluxDB
 
-All metrics are written in influxdb if the plugins Influxdb is enabled (*alumet-relay-server.plugins.influxdb.enable="true"*).
+If `influxdb` is deployed and the `influxdb` Alumet plugin is enabled (by setting `alumet-relay-server.plugins.influxdb.enable="true"`), all the measurements are written to InfluxDB by the relay server.
 
-The credentials to logon to the web page of influxdb are defined by a secret. The secret name is defined by the variable:
+Here is a quick summary of the most important InfluxDB options.
+For more details, refer to [InfluxDB's chart documentation](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2).
 
-- influxdb2.adminUser.existingSecret
+### Database Credentials
 
-The user login is: *admin*
+The credentials are defined by a secret, whose name name is defined by the variable `influxdb2.adminUser.existingSecret`.
 
-The password is get by decoding the *admin-password* key from the secret using the following command:
+The user login is `admin`.
 
-```text
+To get the password, decode the `admin-password` entry from the secret using the following command:
+
+```sh
 kubectl  get secret <secret name> -o jsonpath="{.data.admin-password}" | base64 -d
 ```
 
-If the secret does not exist, the secret is automatically created and credentials generated randomly.
+If the secret does not exist at the time of the deployment, it is automatically created and credentials are generated randomly.
 
-By default the http service is not actived, if needed, the variable *influxdb2.service.type* must be set with *LoadBalancer* value.
-Refer to <https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2> for more details about influxdb configuration.
+### HTTP Service
 
-## Deployment example
-
-Below an exemple of ALUMET deployment on k8s cluster with 4 nodes. In our example, the influxdb persistence is not activated, if you want persistence , you need to set the variable *influxdb2.persistence.enabled* to *true* and you need to create the persistence volume before deployment.
-
-Before executing the *helm install* command you need to add the helm repositories:
-
-```text
-helm repo add influxdata https://helm.influxdata.com/
-helm repo add alumet https://alumet-dev.github.io/helm-charts/
-```
-
-And the command to create the secret to get access to the github registry if the docker images are privates:
-
-```text
-kubectl  -n <namesapce> create  secret docker-registry gh-registry-secret --docker-server=ghcr.io/alumet-dev --docker-username=<user> --docker-password=<github token>
-```
-
-```text
-helm install test-alumet alumet --namespace test --set influxdb2.persistence.enabled=false --set global.secret=gh-registry-secret
-NAME: test-alumet
-LAST DEPLOYED: Wed Jan 22 09:35:29 2025
-NAMESPACE: test
-STATUS: deployed
-REVISION: 1
-NOTES:
-Installing alumet
-Your installed version  0.1.0
-Your instance name is:  test-alumet
-
-
-    influxdb plugin is enabled, a secret to get access to influxdb database must be defined
-
-
-
-            A secret test-alumet-influxdb2-auth was created
-            To get influxdb admin user password, decode the admin-password key from your secret:
-            kubectl  -n test get secret test-alumet-influxdb2-auth -o jsonpath="{.data.admin-password}" | base64 -d
-            To get influxdb token, decode the admin-token key from your secret:
-            kubectl  -n test get secret test-alumet-influxdb2-auth -o jsonpath="{.data.admin-token}" | base64 -d
-```
-
-List of pods and services running:
-
-```text
-local@master:$ kubectl -n test get pod
-NAME                                               READY   STATUS                  RESTARTS   AGE
-test-alumet-alumet-relay-client-6ssmd              1/1     Running                 0          56s
-test-alumet-alumet-relay-client-h4ntl              1/1     Running                 0          56s
-test-alumet-alumet-relay-client-hsgdl              1/1     Running                 0          56s
-test-alumet-alumet-relay-client-ms2hd              1/1     Running                 0          56s
-test-alumet-alumet-relay-client-zvvbg              1/1     Running                 0          56s
-test-alumet-alumet-relay-server-54d548d487-9v62r   1/1     Running                 0          56s
-test-alumet-influxdb2-0                            1/1     Running                 0          56s
-
-local@master:$ kubectl -n test get svc
-NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)        AGE
-test-alumet-alumet-relay-server   ClusterIP      10.102.121.155   <none>         50051/TCP      63s
-test-alumet-influxdb2             LoadBalancer   10.104.55.25     192.168.1.48   80:30421/TCP   63s
-```
+By default the http service is not actived, if needed, the variable `influxdb2.service.type` must be set to `LoadBalancer`.
