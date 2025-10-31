@@ -138,7 +138,6 @@ collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
 push_interval_seconds = {{ .Values.plugins.opentelemetry.push_interval_seconds }}
 prefix = ""
 suffix = "_alumet"
-append_unit_to_metric_name = false
 use_unit_display_name = true
 add_attributes_to_labels = true
 
@@ -147,7 +146,6 @@ enable = {{ .Values.plugins.prometheusExporter.enable }}
 host = "0.0.0.0"
 prefix = ""
 suffix = "_alumet"
-port = 9090
-append_unit_to_metric_name = false
+port = {{ .Values.plugins.prometheusExporter.port }}
 use_unit_display_name = true
 add_attributes_to_labels = true
