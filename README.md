@@ -220,7 +220,7 @@ The default configuration is correctly set-up to allow communication between ALU
 - alumet-relay-client.plugins.csv.enable="false"
 - alumet-relay-client.plugins.aggregation.enable="false"
 - alumet-relay-client.plugins.energyAttribution.enable="false"
-- alumet-relay-client.plugins.EnergyEstimationTdpPlugin.enable="false"
+- alumet-relay-client.plugins.energyEstimationTdpPlugin.enable="false"
 - alumet-relay-client.plugins.jetson.enable="false"
 - alumet-relay-client.plugins.k8s.enable="true"
 - alumet-relay-client.plugins.nvml.enable="false"

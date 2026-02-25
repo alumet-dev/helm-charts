@@ -48,13 +48,11 @@ plugins:
   energyAttribution:
     enable: false
     metrics: 'cpu_time_delta'
-  EnergyEstimationTdp:
+  energyEstimationTdp:
     enable: false
-    poll_interval: 5s
     tdp: 100
     nb_vcpu: 1
     nb_cpu: 1
-    cpu_usage_per_pod: 'cpu_time_delta'
   jetson:
     enable: false
   k8s:
