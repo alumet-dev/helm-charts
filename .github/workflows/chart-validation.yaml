@@ -40,7 +40,7 @@ jobs:
         uses: helm/chart-testing-action@v2.8.0
 
       - name: Run chart-testing (lint)
-        run: ct lint --config ct.yaml --charts charts/alumet --charts charts/alumet/charts/alumet-relay-client --charts charts/alumet/charts/alumet-relay-server
+        run: ct lint --config ct.yaml --github-groups --charts charts/alumet --charts charts/alumet/charts/alumet-relay-client --charts charts/alumet/charts/alumet-relay-server
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.13.0
@@ -62,4 +62,4 @@ jobs:
       - name: Run chart-testing (install)
         run: |
           helm repo add influxdata https://helm.influxdata.com/
-          ct install --config ct.yaml --charts charts/alumet
+          ct install --config ct.yaml --github-groups --charts charts/alumet
