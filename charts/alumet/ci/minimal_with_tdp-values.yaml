@@ -1,0 +1,34 @@
+alumet-relay-server:
+  enabled: true
+  plugins:
+    influxdb:
+      enable: false
+    csv:
+      enable: true
+
+alumet-relay-client:
+  enabled: true
+  plugins:
+    procfs:
+      enable: true
+    k8s:
+      enable: true
+      poll_interval: 5s
+    # Will be enabled with tdp v2
+    energyAttribution:
+      enable: false
+      metrics: 'cpu_time_delta'
+    EnergyEstimationTdp:
+      enable: true
+      poll_interval: 5s
+      tdp: 100
+      nb_vcpu: 1
+      nb_cpu: 1
+      cpu_usage_per_pod: 'cpu_time_delta'
+
+influxdb2:
+  enabled: false
+
+global:
+  image:
+    registry: ghcr.io/alumet-dev
