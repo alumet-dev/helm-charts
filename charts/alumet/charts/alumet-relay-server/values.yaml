@@ -8,6 +8,7 @@ securityContext:
     add:
       - SYS_NICE
       - PERFMON
+      - SYS_PTRACE
 
 resources:
   limits:

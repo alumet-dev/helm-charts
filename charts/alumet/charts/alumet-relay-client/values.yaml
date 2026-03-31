@@ -8,6 +8,7 @@ securityContext:
       - SYS_ADMIN
       - SYS_NICE
       - PERFMON
+      - SYS_PTRACE
 
 resources:
   limits:
@@ -47,7 +48,6 @@ plugins:
     metrics: 'cpu_time_delta'
   energyAttribution:
     enable: false
-    metrics: 'cpu_time_delta'
   energyEstimationTdp:
     enable: false
     tdp: 100
