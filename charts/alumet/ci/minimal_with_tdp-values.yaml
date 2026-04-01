@@ -14,17 +14,13 @@ alumet-relay-client:
     k8s:
       enable: true
       poll_interval: 5s
-    # Will be enabled with tdp v2
     energyAttribution:
-      enable: false
-      metrics: 'cpu_time_delta'
+      enable: true
     EnergyEstimationTdp:
       enable: true
-      poll_interval: 5s
       tdp: 100
       nb_vcpu: 1
       nb_cpu: 1
-      cpu_usage_per_pod: 'cpu_time_delta'
 
 influxdb2:
   enabled: false
