@@ -143,7 +143,7 @@ retention_time = "6s"
 # Timeseries related to the resources.
 [plugins.energy-attribution.formulas.attributed_estimate_energy.per_resource]
 # Defines the timeseries `cpu_energy` that is used in the formula, as the measurement points that have:
-# - the metric `estimated_energy`,
+# - the metric `estimated_consumed_energy`,
 # - and the resource kind `"local_machine"`
 cpu_energy = { metric = "estimated_energy", resource_kind = "local_machine" }
 

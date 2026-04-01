@@ -22,6 +22,6 @@
 *.tmproj
 .vscode/
 # Helm unittest files
-tests/
+./tests/
 # Chart testing values
 ci/
