@@ -1,3 +1,4 @@
+# Ensure that the client pods remain Running and do not crash when processing the alumet-config.toml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -38,14 +39,12 @@ spec:
             # Check every pod's phase
             NOT_RUNNING=$(kubectl get pods \
               -l "$SELECTOR" \
-              -n "$NAMESPACE" \
-              -o jsonpath='{.items[*].status.phase}' \
-              | tr ' ' '\n' \
-              | grep -v "^Running$" || true)
+              --field-selector "status.phase!=Running" \
+              -n "$NAMESPACE" || true)
 
             if [ -n "$NOT_RUNNING" ]; then
               echo "FAIL: Some pods are not Running at ${ELAPSED}s: $NOT_RUNNING"
-              kubectl get pods -l "$SELECTOR" -n "$NAMESPACE"
+              kubectl get pods -l "$SELECTOR" -n "$NAMESPACE" --field-selector "status.phase!=Running"
               exit 1
             fi
 

@@ -16,7 +16,7 @@ alumet-relay-client:
       poll_interval: 5s
     energyAttribution:
       enable: true
-    EnergyEstimationTdp:
+    energyEstimationTdp:
       enable: true
       tdp: 100
       nb_vcpu: 1
