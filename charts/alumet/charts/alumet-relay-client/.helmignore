@@ -22,4 +22,4 @@
 *.tmproj
 .vscode/
 # Helm unittest files
-tests/
+./tests/
