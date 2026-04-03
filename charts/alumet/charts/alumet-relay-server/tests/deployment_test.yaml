@@ -77,3 +77,15 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].image
           value: registry.com/alumet-agent:1.2.3-1_ubuntu_24.04
+  - it: should have the default env vars
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: RUST_LOG
+            value: info
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: RUST_BACKTRACE
+            value: ""

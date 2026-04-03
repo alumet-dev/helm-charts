@@ -45,10 +45,10 @@ spec:
               mountPath: /etc/alumet/alumet-agent.toml
               subPath: config
           env:
-            - name: RUST_LOG
-              value: "{{ .Values.env.RUST_LOG }}"
-            - name: RUST_BACKTRACE
-              value: "{{ .Values.env.RUST_BACKTRACE }}"
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
             - name: INFLUX_TOKEN
             {{- if .Values.plugins.influxdb.enable }}
               valueFrom:
