@@ -21,6 +21,9 @@ spec:
         runAsUser: 0
       tolerations:
         {{ toYaml .Values.tolerations | nindent 8 }}
+      {{- if .Values.runtimeClassName }}
+      runtimeClassName: {{ .Values.runtimeClassName }}
+      {{- end }}
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
       {{- if .Values.plugins.relay_client.enable }}

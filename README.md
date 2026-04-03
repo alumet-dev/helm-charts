@@ -252,6 +252,12 @@ To create the config map:
 kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
 ```
 
+### Configure runtimeClassName
+
+If you're running ALUMET in a specific environment: with nvidia GPUs, with multiple runtimes, etc.
+You may want to specify the runtimeClassName that will be used by the ALUMET client. To do so, you must set
+`alumet-relay-client.runtimeClassName` to the desired value.
+
 ## InfluxDB
 
 If `influxdb` is deployed and the `influxdb` Alumet plugin is enabled (by setting `alumet-relay-server.plugins.influxdb.enable="true"`), all the measurements are written to InfluxDB by the relay server.
