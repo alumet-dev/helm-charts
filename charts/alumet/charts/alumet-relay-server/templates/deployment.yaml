@@ -19,6 +19,9 @@ spec:
         app: alumet-relay-server
         {{ include "alumet-relay-server.labels" . | nindent 8 }}
     spec:
+    {{- if .Values.runtimeClassName }}
+      runtimeClassName: {{ .Values.runtimeClassName }}
+    {{- end }}
     {{- if .Values.plugins.influxdb.enable }}
       {{- if not .Values.plugins.influxdb.host }}
       # activate init containers only when influxdb plugin is activated and if influxdb is deployed in this chart
@@ -31,8 +34,8 @@ spec:
             '-c',
             'timeout 30s sh -c "until wget -nv -t1 --spider \"http://{{ .Release.Name }}-influxdb2:80/health\"; do echo \"Waiting for influxdb service to be running\"; sleep 2; done;" || { echo \"Timeout while waiting for influxdb\"; exit 1; }'
           ]
-        {{- end }}
       {{- end }}
+    {{- end }}
       containers:
         - name: alumet-relay-server
           image: {{ $global.image.registry }}/alumet-agent:{{ .Values.image.version | default (printf "%s-%.f_%s" .Chart.AppVersion .Values.image.revision .Values.image.osVersion) }}

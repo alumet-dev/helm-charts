@@ -212,6 +212,12 @@ To create the config map:
 kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
 ```
 
+### Configure runtimeClassName
+
+If you're running ALUMET in a specific environment: with nvidia GPUs, with multiple runtimes, etc.
+You may want to specify the runtimeClassName that will be used by the ALUMET server. To do so, you must set
+`alumet-relay-server.runtimeClassName` to the desired value.
+
 ## ALUMET relay client
 
 It collects the metrics of the kubernetes nodes where it is running and sends them to ALUMET  relay server.
