@@ -21,6 +21,9 @@ spec:
         runAsUser: 0
       tolerations:
         {{ toYaml .Values.tolerations | nindent 8 }}
+      {{- if .Values.runtimeClassName }}
+      runtimeClassName: {{ .Values.runtimeClassName }}
+      {{- end }}
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
       {{- if .Values.plugins.relay_client.enable }}
@@ -59,10 +62,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: RUST_LOG
-              value: "{{ .Values.env.RUST_LOG }}"
-            - name: RUST_BACKTRACE
-              value: "{{ .Values.env.RUST_BACKTRACE }}"
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
       volumes:

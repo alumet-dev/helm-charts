@@ -45,7 +45,8 @@ In order to be able to run the tests with chart-testing, you first need to deplo
 a new k8s cluster using `kind`, to do so, run:
 
 ```bash
-kind create cluster --config .github/.kind-config.yaml
+kind create cluster --config .github/kind/config.yaml
+find .github/kind/ -type f -not -name "config.yaml" -exec kubectl apply -f {} \; 
 ```
 
 If you need a more advanced configuration for your cluster, check [the documentation from kind](https://kind.sigs.k8s.io/docs/user/configuration/).
