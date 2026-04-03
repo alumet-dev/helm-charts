@@ -1,5 +1,6 @@
 alumet-relay-server:
   enabled: true
+  runtimeClassName: runc
   plugins:
     influxdb:
       enable: false
@@ -8,6 +9,7 @@ alumet-relay-server:
 
 alumet-relay-client:
   enabled: true
+  runtimeClassName: runc
   plugins:
     procfs:
       enable: true
