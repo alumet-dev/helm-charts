@@ -13,6 +13,8 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
       {{ end }}
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
       labels:
         {{ include "alumet-relay-client.labels" . | nindent 8 }}
     spec:
