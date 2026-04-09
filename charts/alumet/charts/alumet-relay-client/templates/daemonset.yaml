@@ -9,12 +9,11 @@ spec:
       app.kubernetes.io/name: alumet-relay-client
   template:
     metadata:
-      {{- if .Values.plugins.prometheusExporter.enable }}
-      annotations:
-        prometheus.io/scrape: 'true'
-      {{ end }}
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.plugins.prometheusExporter.enable }}
+        prometheus.io/scrape: 'true'
+        {{ end }}
       labels:
         {{ include "alumet-relay-client.labels" . | nindent 8 }}
     spec:
