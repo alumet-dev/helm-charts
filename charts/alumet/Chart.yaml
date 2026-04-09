@@ -30,7 +30,7 @@ dependencies:
     condition: influxdb2.enabled
     repository: 'https://helm.influxdata.com'
   - name: alumet-relay-server
-    version: 0.6.0
+    version: 0.6.1
     condition: alumet-relay-server.enabled
   - name: alumet-relay-client
     version: 0.6.1
