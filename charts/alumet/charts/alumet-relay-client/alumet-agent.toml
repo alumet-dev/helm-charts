@@ -107,10 +107,10 @@ enable = {{ .Values.plugins.energyAttribution.enable }}
 expr = "cpu_energy * cpu_usage / 100.0"
 ref = "cpu_energy"
 # The duration the measurement points are kept in memory before being dropped.
-# This need to be coherent with the poll_interval of the metrics involved in this formula.
-# Eg: If the metrics come from sources that poll every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
+# This need to be coherent with the poll_interval/flush_interval of the metrics involved in this formula.
+# Eg: If the metrics come from sources poll/flush every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
 # This way the plugin can make use of the precedent values of this metric to make interpolations.
-{{ $poll := trimSuffix "s" .Values.plugins.rapl.poll_interval | int -}}
+{{ $poll := trimSuffix "s" .Values.plugins.rapl.flush_interval | int -}}
 {{- $new_poll := add $poll 1 -}}
 retention_time = "{{ $new_poll }}s"
 
@@ -135,8 +135,8 @@ cpu_usage = { metric = "cpu_percent", kind = "total" }
 expr = "cpu_energy * cpu_usage / 100.0"
 ref = "cpu_energy"
 # The duration the measurement points are kept in memory before being dropped.
-# This need to be coherent with the poll_interval of the metrics involved in this formula.
-# Eg: If the metrics come from sources that poll every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
+# This need to be coherent with the poll_interval/flush_interval of the metrics involved in this formula.
+# Eg: If the metrics come from sources that poll/flush every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
 # This way the plugin can make use of the precedent values of this metric to make interpolations.
 retention_time = "6s"
 
