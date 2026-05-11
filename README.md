@@ -258,6 +258,12 @@ To create the config map:
 kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
 ```
 
+### Using the nvml plugin
+
+When enabling the nvml plugin through the values, the chart automatically appends a limits of `nvidia.com/gpu` to `1`.
+You can override the limit value in the chart's values.
+Consider using [Time Slicing](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html) to enable GPU sharing.
+
 ### Configure runtimeClassName
 
 If you're running ALUMET in a specific environment: with nvidia GPUs, with multiple runtimes, etc.
