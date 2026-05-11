@@ -97,3 +97,44 @@ tests:
           content:
             name: RUST_BACKTRACE
             value: ""
+  - it: shouldn't have limit gpu if nvml plugin is not enable
+    set:
+      plugins:
+        nvml:
+          enable: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources.limits["nvidia.com/gpu"]
+  - it: should have limit gpu if nvml plugin is enable
+    set:
+      plugins:
+        nvml:
+          enable: true
+    asserts:
+      - isSubset:
+          path: spec.template.spec.containers[0].resources.limits
+          content:
+            nvidia.com/gpu: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits["nvidia.com/gpu"]
+          value: 1
+  - it: should have limit gpu only once when nvml enable and limit set manually
+    set:
+      plugins:
+        nvml:
+          enable: true
+      resources:
+        limits:
+          nvidia.com/gpu: 32
+    asserts:
+      - isSubset:
+          path: spec.template.spec.containers[0].resources.limits
+          content:
+            nvidia.com/gpu: 32
+      - isNotSubset:
+          path: spec.template.spec.containers[0].resources.limits
+          content:
+            nvidia.com/gpu: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits["nvidia.com/gpu"]
+          value: 32

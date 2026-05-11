@@ -47,6 +47,14 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+            {{- if .Values.plugins.nvml.enable -}}
+              {{- if empty .Values.resources.limits }}
+            limits:
+              {{- end }}
+              {{- if eq (index .Values.resources.limits "nvidia.com/gpu") nil }}
+              nvidia.com/gpu: 1
+              {{- end }}
+            {{- end }}
           volumeMounts:
             - name: sysfs
               mountPath: /sys
