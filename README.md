@@ -258,6 +258,11 @@ To create the config map:
 kubectl create cm <config map name> --from-file=config=alumet-agent-client.toml
 ```
 
+### Using process-to-cgroup-bridge plugin
+
+The process-to-cgroup-bridge find the associated cgroup to a process.
+This plugin needs access to PIDs below `/proc/`. The key *hostPID* allows the pod to share the PID namespace, allowing the plugin to access other processes executed on the node.
+
 ### Using the nvml plugin
 
 When enabling the nvml plugin through the values, the chart automatically appends a limits of `nvidia.com/gpu` to `1`.
