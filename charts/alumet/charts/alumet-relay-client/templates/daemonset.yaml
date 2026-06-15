@@ -17,9 +17,6 @@ spec:
       labels:
         {{ include "alumet-relay-client.labels" . | nindent 8 }}
     spec:
-      securityContext:
-        # for RAPL plugin we need to be root
-        runAsUser: 0
       tolerations:
         {{ toYaml .Values.tolerations | nindent 8 }}
       {{- if .Values.runtimeClassName }}
@@ -27,6 +24,9 @@ spec:
       {{- end }}
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
+      {{- if .Values.hostPID }}
+      hostPID: {{ .Values.hostPID }}
+      {{- end }}
       {{- if .Values.plugins.relay_client.enable }}
       # if relay_client plugin is activated, wait starting alumet server
       initContainers:

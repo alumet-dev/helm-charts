@@ -4,12 +4,9 @@ fullnameOverride: ''
 runtimeClassName: ''
 
 securityContext:
-  capabilities:
-    add:
-      - SYS_ADMIN
-      - SYS_NICE
-      - PERFMON
-      - SYS_PTRACE
+  privileged: true
+
+hostPID: true
 
 resources:
   limits:
