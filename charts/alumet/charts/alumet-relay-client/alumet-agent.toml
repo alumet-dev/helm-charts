@@ -39,6 +39,7 @@ k8s_api_url = "https://kubernetes.default.svc:443"
 k8s_node = "${NODE_NAME}"
 token_retrieval = "file"
 annotate_foreign_measurements = false
+annotate_containers = true
 
 [plugins.nvml]
 enable = {{ .Values.plugins.nvml.enable }}
