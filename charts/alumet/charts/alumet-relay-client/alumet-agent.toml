@@ -194,7 +194,6 @@ socket_path = "alumet-control.sock"
 
 [plugins.opentelemetry]
 enable = {{ .Values.plugins.opentelemetry.enable }}
-push_interval_seconds = {{ .Values.plugins.opentelemetry.push_interval_seconds }}
 collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
 prefix = ""
 suffix = "_alumet"
