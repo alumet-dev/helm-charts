@@ -155,6 +155,26 @@ cpu_energy = { metric = "estimated_consumed_energy", resource_kind = "local_mach
 # - the attribute `kind` equal to `total`
 cpu_usage = { metric = "cpu_percent", kind = "total" }
 {{- end }}
+{{ if and .Values.plugins.energyAttribution.enable .Values.plugins.nvml.enable }}
+[plugins.energy-attribution.formulas.attributed_nvml_energy]
+expr = "(gpu_energy/1000) * (gpu_usage/100.0)" # gpu_energy are mJ
+ref = "gpu_energy"
+retention_time = "6s"
+
+[plugins.energy-attribution.formulas.attributed_nvml_energy.per_resource]
+gpu_energy = { metric = "nvml_energy_consumption", resource_kind = "gpu" }
+
+[plugins.energy-attribution.formulas.attributed_nvml_energy.per_consumer]
+gpu_usage = { metric = "nvml_sm_utilization" }
+
+[plugins.process-to-cgroup-bridge]
+# The metrics names we want to find the cgroup for
+processes_metrics = ["attributed_nvml_energy"]
+# Will aggregate measurements in case multiple processes share the same cgroup and have the same timestamp. This leads to one measurement per metric per cgroup per timestamp.
+merge_similar_cgroups = true
+# Will keep all the measurements that have been processed by the transformer. In case it's false only the measurements with a cgroup resource consumer will be kept.
+keep_processed_measurements = false
+{{- end }}
 
 [plugins.relay-client]
 enable = {{ .Values.plugins.relay_client.enable }}
@@ -174,7 +194,6 @@ socket_path = "alumet-control.sock"
 
 [plugins.opentelemetry]
 enable = {{ .Values.plugins.opentelemetry.enable }}
-push_interval_seconds = {{ .Values.plugins.opentelemetry.push_interval_seconds }}
 collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
 prefix = ""
 suffix = "_alumet"

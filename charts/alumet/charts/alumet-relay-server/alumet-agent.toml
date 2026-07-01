@@ -31,7 +31,6 @@ password = "{{ .Values.plugins.mongodb.password }}"
 [plugins.opentelemetry]
 enable = {{ .Values.plugins.opentelemetry.enable }}
 collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
-push_interval_seconds = {{ .Values.plugins.opentelemetry.push_interval_seconds }}
 prefix = ""
 suffix = "_alumet"
 use_unit_display_name = true
