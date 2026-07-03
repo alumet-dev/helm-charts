@@ -58,6 +58,8 @@ plugins:
     poll_interval: 5s
   nvml:
     enable: false
+    poll_interval: 1s
+    flush_interval: 5s
     mode: full
   oar:
     enable: false
