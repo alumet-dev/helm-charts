@@ -103,11 +103,10 @@ ref = "cpu_energy"
 # Eg: If the metrics come from sources poll/flush every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
 # This way the plugin can make use of the precedent values of this metric to make interpolations.
 {{- $val := .Values.plugins.rapl.flush_interval | toString }}
-{{- $lastChar := substr (int (sub (len $val) 1)) (int (len $val)) $val }}
-{{ $poll := trimSuffix $lastChar .Values.plugins.rapl.flush_interval | int -}}
-{{- $new_poll := add $poll 1 -}}
-
-retention_time = "{{ $new_poll }}{{ $lastChar }}"
+{{ $unit := regexReplaceAll "^[0-9]+" $val "" }}
+{{ $numeric := regexReplaceAll "[^0-9]" $val "" }}
+{{ $new_poll := add $numeric 1 -}}
+retention_time = "{{ $new_poll }}{{ $unit }}"
 
 # Timeseries related to the resources.
 [plugins.energy-attribution.formulas.attributed_rapl_energy.per_resource]
@@ -157,12 +156,11 @@ ref = "gpu_energy"
 # This need to be coherent with the poll_interval/flush_interval of the metrics involved in this formula.
 # Eg: If the metrics come from sources poll/flush every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
 # This way the plugin can make use of the precedent values of this metric to make interpolations.
-{{- $val := .Values.plugins.nvml.flush_interval | toString }}
-{{- $lastChar := substr (int (sub (len $val) 1)) (int (len $val)) $val }}
-{{ $poll := trimSuffix $lastChar .Values.plugins.nvml.flush_interval | int -}}
-{{- $new_poll := add $poll 1 -}}
-
-retention_time = "{{ $new_poll }}{{ $lastChar }}"
+{{ $val := .Values.plugins.nvml.flush_interval | toString }}
+{{ $unit := regexReplaceAll "^[0-9]+" $val "" }}
+{{ $numeric := regexReplaceAll "[^0-9]" $val "" }}
+{{ $new_poll := add $numeric 1 -}}
+retention_time = "{{ $new_poll }}{{ $unit }}"
 
 [plugins.energy-attribution.formulas.attributed_nvml_energy.per_resource]
 gpu_energy = { metric = "nvml_energy_consumption", resource_kind = "gpu" }
