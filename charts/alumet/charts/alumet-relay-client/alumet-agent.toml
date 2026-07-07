@@ -32,19 +32,10 @@ enable = {{ .Values.plugins.jetson.enable }}
 poll_interval = "1s"
 flush_interval = "5s"
 
-[plugins.k8s]
-enable = {{ .Values.plugins.k8s.enable }}
-poll_interval = "{{ .Values.plugins.k8s.poll_interval }}"
-k8s_api_url = "https://kubernetes.default.svc:443"
-k8s_node = "${NODE_NAME}"
-token_retrieval = "file"
-annotate_foreign_measurements = false
-annotate_containers = true
-
 [plugins.nvml]
 enable = {{ .Values.plugins.nvml.enable }}
-poll_interval = "1s"
-flush_interval = "5s"
+poll_interval = "{{ .Values.plugins.nvml.poll_interval }}"
+flush_interval = "{{ .Values.plugins.nvml.flush_interval }}"
 skip_failed_devices = true
 mode = "{{ .Values.plugins.nvml.mode }}"
 
@@ -111,9 +102,12 @@ ref = "cpu_energy"
 # This need to be coherent with the poll_interval/flush_interval of the metrics involved in this formula.
 # Eg: If the metrics come from sources poll/flush every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
 # This way the plugin can make use of the precedent values of this metric to make interpolations.
-{{ $poll := trimSuffix "s" .Values.plugins.rapl.flush_interval | int -}}
+{{- $val := .Values.plugins.rapl.flush_interval | toString }}
+{{- $lastChar := substr (int (sub (len $val) 1)) (int (len $val)) $val }}
+{{ $poll := trimSuffix $lastChar .Values.plugins.rapl.flush_interval | int -}}
 {{- $new_poll := add $poll 1 -}}
-retention_time = "{{ $new_poll }}s"
+
+retention_time = "{{ $new_poll }}{{ $lastChar }}"
 
 # Timeseries related to the resources.
 [plugins.energy-attribution.formulas.attributed_rapl_energy.per_resource]
@@ -159,7 +153,16 @@ cpu_usage = { metric = "cpu_percent", kind = "total" }
 [plugins.energy-attribution.formulas.attributed_nvml_energy]
 expr = "(gpu_energy/1000) * (gpu_usage/100.0)" # gpu_energy are mJ
 ref = "gpu_energy"
-retention_time = "6s"
+# The duration the measurement points are kept in memory before being dropped.
+# This need to be coherent with the poll_interval/flush_interval of the metrics involved in this formula.
+# Eg: If the metrics come from sources poll/flush every 1 second, it's recommanded to define the retention_time to at least 2 seconds.
+# This way the plugin can make use of the precedent values of this metric to make interpolations.
+{{- $val := .Values.plugins.nvml.flush_interval | toString }}
+{{- $lastChar := substr (int (sub (len $val) 1)) (int (len $val)) $val }}
+{{ $poll := trimSuffix $lastChar .Values.plugins.nvml.flush_interval | int -}}
+{{- $new_poll := add $poll 1 -}}
+
+retention_time = "{{ $new_poll }}{{ $lastChar }}"
 
 [plugins.energy-attribution.formulas.attributed_nvml_energy.per_resource]
 gpu_energy = { metric = "nvml_energy_consumption", resource_kind = "gpu" }
@@ -175,6 +178,15 @@ merge_similar_cgroups = true
 # Will keep all the measurements that have been processed by the transformer. In case it's false only the measurements with a cgroup resource consumer will be kept.
 keep_processed_measurements = false
 {{- end }}
+
+[plugins.k8s]
+enable = {{ .Values.plugins.k8s.enable }}
+poll_interval = "{{ .Values.plugins.k8s.poll_interval }}"
+k8s_api_url = "https://kubernetes.default.svc:443"
+k8s_node = "${NODE_NAME}"
+token_retrieval = "file"
+annotate_foreign_measurements = true
+annotate_containers = true
 
 [plugins.relay-client]
 enable = {{ .Values.plugins.relay_client.enable }}
