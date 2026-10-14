@@ -7,8 +7,6 @@ rules:
       - ""
     resources:
       - pods
-      - pods/logs
-      - pods/status
       - nodes
       - namespaces
     verbs:
